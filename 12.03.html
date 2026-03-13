@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Ответы — Качество кода</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap");
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --card: #1a1a25;
+            --border: #2a2a3d;
+            --accent: #f97316;
+            --accent2: #facc15;
+            --accent3: #4ade80;
+            --accent4: #38bdf8;
+            --accent5: #ef4444;
+            --accent6: #c084fc;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+            radial-gradient(
+                ellipse at 10% 30%,
+                rgba(249, 115, 22, 0.08) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                ellipse at 90% 70%,
+                rgba(250, 204, 21, 0.06) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                ellipse at 55% 10%,
+                rgba(192, 132, 252, 0.05) 0%,
+                transparent 40%
+            );
+            animation: bgPulse 22s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% {
+            transform: translate(0, 0) scale(1);
+            }
+            100% {
+            transform: translate(1%, 2%) scale(1.02);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── HEADER ── */
+        header {
+            padding: 64px 20px 44px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f97316, #facc15);
+            color: #0a0a0f;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            padding: 7px 18px;
+            border-radius: 20px;
+            margin-bottom: 22px;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 4.8rem);
+            font-weight: 900;
+            line-height: 1.08;
+            background: linear-gradient(135deg, #fff 0%, #f97316 40%, #facc15 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 14px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 44px;
+            line-height: 1.6;
+        }
+
+        /* ── STATS ── */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .stat-chip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 18px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 0.88rem;
+        }
+
+        .stat-chip .num {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* ── PROGRESS ── */
+        .progress-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            font-size: 0.93rem;
+            white-space: nowrap;
+        }
+        .progress-bar-outer {
+            flex: 1;
+            min-width: 180px;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #f97316, #facc15);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        .progress-count {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.88rem;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 15px;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: "Inter", sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover {
+            border-color: var(--accent5);
+            color: var(--accent5);
+        }
+
+        /* ── CONTROLS ── */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 16px 11px 42px;
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            font-size: 0.93rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-wrap input:focus {
+            border-color: var(--accent);
+        }
+        .search-wrap::before {
+            content: "🔍";
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .filter-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 15px;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: "Inter", sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--accent);
+            color: #fff;
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        /* ── TOPIC SECTION ── */
+        .topic-section {
+            margin-bottom: 64px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+
+        .topic-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .topic-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .topic-meta {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .topic-count {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.78rem;
+            color: var(--muted);
+            background: var(--surface);
+            padding: 4px 11px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        /* ── GRID ── */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 14px;
+        }
+
+        /* ── CARD ── */
+        .task-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.22s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: radial-gradient(
+            circle at 50% 0%,
+            var(--card-glow, rgba(249, 115, 22, 0.06)) 0%,
+            transparent 70%
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .task-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(
+            90deg,
+            var(--card-color, #f97316),
+            transparent
+            );
+            opacity: 0;
+            transition: opacity 0.22s;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.32);
+        }
+        .task-card:hover::before,
+        .task-card:hover::after {
+            opacity: 1;
+        }
+
+        .task-card.done {
+            background: rgba(74, 222, 128, 0.06);
+            border-color: rgba(74, 222, 128, 0.28);
+        }
+        .task-card.done::before {
+            opacity: 1;
+            background: linear-gradient(90deg, #4ade80, transparent);
+        }
+
+        .task-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 13px;
+        }
+
+        .task-num {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.73rem;
+            color: var(--muted);
+            background: var(--surface);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .difficulty {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .diff-easy {
+            background: rgba(74, 222, 128, 0.13);
+            color: #4ade80;
+        }
+        .diff-medium {
+            background: rgba(250, 204, 21, 0.13);
+            color: #facc15;
+        }
+        .diff-hard {
+            background: rgba(239, 68, 68, 0.13);
+            color: #ef4444;
+        }
+
+        .task-text {
+            font-size: 0.92rem;
+            line-height: 1.68;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        .task-text code {
+            font-family: "JetBrains Mono", monospace;
+            background: var(--surface);
+            color: #f97316;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.84em;
+        }
+
+        .code-block {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.77rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #94a3b8;
+            margin-bottom: 14px;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.65;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .btn-done {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 15px;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: "Inter", sans-serif;
+            font-size: 0.79rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-done:hover {
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+        .task-card.done .btn-done {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+
+        /* ── FLOAT ── */
+        .float-counter {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: linear-gradient(135deg, #f97316, #facc15);
+            border-radius: 20px;
+            padding: 13px 22px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #0a0a0f;
+            box-shadow: 0 8px 32px rgba(249, 115, 22, 0.45);
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        .float-counter:hover {
+            transform: scale(1.06);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        @media (max-width: 640px) {
+            .task-grid {
+            grid-template-columns: 1fr;
+            }
+            h1 {
+            font-size: 2.3rem;
+            }
+            .float-counter {
+            bottom: 14px;
+            right: 14px;
+            padding: 10px 16px;
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="badge">✦ Готовые ответы</div>
+      <h1>100 ответов<br />Качество кода</h1>
+      <p class="subtitle">
+        Отладка · Стиль · Комментарии · Ниндзя-код · Mocha · Полифилы
+      </p>
+      <div class="stats">
+        <div class="stat-chip"><span class="num">100</span> ответов</div>
+        <div class="stat-chip"><span class="num">6</span> тем</div>
+        <div class="stat-chip"><span class="num" id="easyCount">0</span> лёгких</div>
+        <div class="stat-chip"><span class="num" id="medCount">0</span> средних</div>
+        <div class="stat-chip"><span class="num" id="hardCount">0</span> сложных</div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="progress-wrap">
+        <span class="progress-label">⚡ Прогресс</span>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progressBar" style="width: 0%"></div>
+        </div>
+        <span class="progress-count" id="progressText">0 / 100</span>
+        <button class="btn-reset" onclick="resetAll()">Сбросить</button>
+      </div>
+
+      <div class="controls">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Поиск ответа..." oninput="filterTasks()" />
+        </div>
+        <button class="filter-btn active" onclick="setFilter('all', this)">Все</button>
+        <button class="filter-btn" onclick="setFilter('easy', this)">Лёгкие</button>
+        <button class="filter-btn" onclick="setFilter('medium', this)">Средние</button>
+        <button class="filter-btn" onclick="setFilter('hard', this)">Сложные</button>
+        <button class="filter-btn" onclick="setFilter('done', this)">Прочитано</button>
+        <button class="filter-btn" onclick="setFilter('undone', this)">Не прочитано</button>
+      </div>
+
+      <div id="tasksRoot"></div>
+    </div>
+
+    <div class="float-counter" id="floatCounter">📖 0 / 100</div>
+
+    <script>
+      const TOPICS = [
+        {
+          id: "debug",
+          title: "Отладка в браузере",
+          icon: "🐛",
+          color: "#38bdf8",
+          tasks: [
+            { d: "easy",   t: "<b>DevTools</b> — встроенные инструменты разработчика в браузере (F12 / Ctrl+Shift+I / Cmd+Opt+I). Вкладка <b>Sources</b> в Chrome открывается через Ctrl+Shift+P → Sources или меню → More tools → Sources." },
+            { d: "easy",   t: "<code>debugger;</code> — ставит программный breakpoint. Полезен: в минифицированном коде, production-бандлах, когда DevTools ещё не открыт." },
+            { d: "easy",   t: "Клик по номеру строки в Sources → синий маркер. При срабатывании: код останавливается, видно Call Stack, Scope, Watch, можно менять значения." },
+            { d: "easy",   t: "<b>Step Over (F10)</b> — следующий шаг без захода в функции<br><b>Step Into (F11)</b> — заход внутрь<br><b>Step Out (Shift+F11)</b> — выйти из текущей функции" },
+            { d: "easy",   t: "Навести мышь на переменную → tooltip, либо Scope → раскрыть Local/Closure, либо добавить в Watch-панель (плюсик)." },
+            { d: "easy",   t: "Watch — правая панель. Плюсик → ввести имя / выражение. Автоматически обновляется при каждом шаге отладки." },
+            { d: "medium", t: "Conditional breakpoint: правый клик по строке → Add conditional breakpoint → условие, например <code>i > 5 && user.id === 123</code>" },
+            { d: "medium", t: "Console выполняет код в контексте страницы: доступны window, document, все глобальные переменные и DOM." },
+            { d: "medium", t: "Call Stack — цепочка вызовов сверху вниз (текущая функция → кто вызвал → кто вызвал того и т.д.). Помогает понять, как мы оказались в текущей точке." },
+            { d: "medium", t: "<code>console.table(arrayOfObjects)</code> — выводит массив объектов в виде удобной таблицы вместо простого лога." },
+            { d: "medium", t: "Logpoint: правый клик → Add logpoint → выражение в кавычках, например <code>\`i=${i}, user=${user.name}\`</code>. Логирует без остановки выполнения." },
+            { d: "medium", t: "Async стек виден в Call Stack (Chrome 90+ показывает «Async» раздел). Также можно ставить breakpoint на await или использовать «Async call stacks» в настройках." },
+            { d: "hard",   t: "Blackboxing — исключение файлов/папок из пошаговой отладки. Sources → правый клик на файл/папку → Blackbox script. Удобно для node_modules, vendor." },
+            { d: "hard",   t: "Performance → Record → flame graph: широкие жёлтые/оранжевые блоки = долго выполняющиеся функции. Ищите узкие места (Long Tasks > 50 мс)." },
+            { d: "hard",   t: "Memory → Heap Snapshot → сравнение снимков (Summary / Comparison). Ищем растущие Detached DOM, большие массивы, повторяющиеся строки → утечки." },
+          ]
+        },
+
+        {
+          id: "style",
+          title: "Советы по стилю кода",
+          icon: "✨",
+          color: "#f97316",
+          tasks: [
+            { d: "easy",   t: "Code style — единые правила оформления и написания кода. Нужен для: быстрого чтения, уменьшения споров на ревью, снижения когнитивной нагрузки." },
+            { d: "easy",   t: "<b>camelCase</b> — переменные, функции (userName)<br><b>PascalCase</b> — классы, компоненты (UserProfile)<br><b>UPPER_CASE</b> — константы (MAX_RETRIES)" },
+            { d: "easy",   t: "ESLint — статический анализатор: находит баги, enforces style, запрещает антипаттерны (no-unused-vars, no-console и др.)." },
+            { d: "easy",   t: "Prettier — opinionated форматтер (пробелы, переносы, точки с запятой). ESLint — проверяет логику и качество. Prettier форматирует, ESLint анализирует." },
+            { d: "easy",   t: "80–100 символов — стандарт (Airbnb 100, Google 100). Удобно на split-экране, в git blame, на мобильных устройствах ревью." },
+            { d: "easy",   t: "<pre>*.js\nindent_style = space\nindent_size = 2\nend_of_line = lf\ncharset = utf-8\ntrim_trailing_whitespace = true\ninsert_final_newline = true</pre>" },
+            { d: "medium", t: "Функция должна решать одну задачу. Плохо: валидация + fetch + обработка ошибок в одной функции. Хорошо: validate(), fetchUser(), handleResponse()." },
+            { d: "medium", t: "Магические числа — 42, 86400, 0.75 без объяснения. Решение: const MAX_AGE = 100; const SECONDS_IN_DAY = 86400; const TAX_RATE = 0.2;" },
+            { d: "medium", t: "DRY — не повторяйся. Пример: вместо 4 похожих fetch → helper request(url, method, body)." },
+            { d: "medium", t: "KISS — делай проще. Вместо одной сложной цепочки .map().filter().reduce() лучше 3 понятные строки с хорошими именами." },
+            { d: "medium", t: "Глубокая вложенность → сложно читать и тестировать. Решения: early return, guard clauses, вынос в отдельные функции." },
+            { d: "medium", t: "Хорошо: isLoading, hasError, canSubmit, shouldShowModal<br>Плохо: flag, ok, x, loaded, temp" },
+            { d: "hard",   t: "<code>no-shadow</code> — запрещает перекрывать внешние переменные. Опасно: можно случайно использовать не ту переменную (особенно в замыканиях)." },
+            { d: "hard",   t: "Early return — выход как можно раньше. Пример:<pre>if (!user) return null;\nif (!isActive) return false;\n// основной код</pre> → меньше вложенности." },
+            { d: "hard",   t: "2025: flat config ESLint + prettier + eslint-plugin-prettier + @typescript-eslint + husky + lint-staged. Пример: .eslintrc.cjs + .prettierrc + .lintstagedrc.js" },
+          ]
+        },
+
+        {
+          id: "comments",
+          title: "Комментарии",
+          icon: "💬",
+          color: "#c084fc",
+          tasks: [
+            { d: "easy",   t: "<code>//</code> — до конца строки<br><code>/* */</code> — многострочный, может быть внутри выражения" },
+            { d: "easy",   t: "<pre>/**\n * Складывает два числа\n * @param {number} a Первое слагаемое\n * @param {number} b Второе слагаемое\n * @returns {number} Сумма двух чисел\n */</pre>" },
+            { d: "easy",   t: "<code>@param</code> — описывает входной параметр<br><code>@returns</code> — описывает возвращаемое значение" },
+            { d: "easy",   t: "«Почему» важнее «что», когда решение неочевидно. Пример:<pre>// Делим на 2 вместо bit shift, т.к. вход может быть не целым</pre>" },
+            { d: "easy",   t: "<code>// TODO: заменить на fetch после миграции на HTTP/2</code> — стандартный формат" },
+            { d: "medium", t: "Плохо: <code>i++ // увеличиваем счётчик</code>. Очевидный код не комментируют — комментарии устаревают и отвлекают." },
+            { d: "medium", t: "Self-documenting code — понятные имена, маленькие функции. Плохо: <code>let x = get(); // получаем</code><br>Хорошо: <code>const userCity = profile.getAddress().city;</code>" },
+            { d: "medium", t: "<pre>/**\n * @deprecated Используйте newApi.send вместо\n * @throws {AuthError} при неверном токене\n * @example getUser(123)\n */</pre>" },
+            { d: "medium", t: "Хорошие комментарии объясняют бизнес-контекст, компромиссы, «почему так, а не иначе» → ревью проходит быстрее." },
+            { d: "hard",   t: "JSDoc 3 → <code>npx jsdoc src -c jsdoc.conf.json</code><br>TypeDoc → <code>npx typedoc --entryPoints src/index.ts</code>" },
+            { d: "hard",   t: "Literate programming (Knuth) — код как статья. Сегодня: MDX, mdxjs, literate TS/JS, Observable Notebook." },
+          ]
+        },
+
+        {
+          id: "ninja",
+          title: "Ниндзя-код",
+          icon: "🥷",
+          color: "#ef4444",
+          tasks: [
+            { d: "easy",   t: "Намеренно запутанный, трудночитаемый код. Проблема: поддержка → ад, onboarding → месяцы, баги остаются надолго." },
+            { d: "easy",   t: "Очень трудно понять смысл. Допустимы только в очень локальном контексте (i, j, k в циклах) и при сильном code review." },
+            { d: "easy",   t: "Плохо: usr, el, cfg, tmp. Лучше: user, element, config, temporaryUserData. Сокращения замедляют чтение." },
+            { d: "easy",   t: "Через 2 недели непонятно, что сейчас в data: id, объект, null, строка… → источник трудноуловимых багов." },
+            { d: "easy",   t: "<code>return !!~str.indexOf(substr)</code> — выглядит умно, но читать тяжело. Лучше обычный includes()." },
+            { d: "medium", t: "<code>_private</code> — условная приватность. Часто ставят «для красоты». Лучше #privateFields (ES2022+)." },
+            { d: "medium", t: "Prototype pollution → сломанный код при обновлении библиотеки. Никогда не модифицируй встроенные прототипы." },
+            { d: "medium", t: "<code>if (user && (data = fetch())) { … }</code> — присваивание в условии → легко пропустить баг." },
+            { d: "medium", t: "Плохо: return cond ? 42 : 'error'. Лучше: единый тип возврата + явная проверка." },
+            { d: "hard",   t: "Проблемы: 1) нет пробелов 2) вложенный тернарник 3) неясные имена 4) разные типы возврата 5) перевёрнутая логика → очень трудно читать." },
+            { d: "hard",   t: "Обфускация — усложнение кода для защиты (переименование, control flow flattening). Минификация — удаление пробелов/имён. Обфускация оправдана редко (закрытые продукты, анти-чит)." },
+          ]
+        },
+
+        {
+          id: "mocha",
+          title: "Автотестирование с Mocha",
+          icon: "☕",
+          color: "#4ade80",
+          tasks: [
+            { d: "easy",   t: "Автотесты проверяют, что код работает после каждого изменения → ловят регрессии, дают уверенность при рефакторинге." },
+            { d: "easy",   t: "Mocha — тестовый фреймворк (describe/it). Jest — всё-в-одном (встроенный assert, mocks, coverage, snapshots)." },
+            { d: "easy",   t: "<pre>describe('sum', () => {\n  it('2 + 3 = 5', () => {\n    assert.equal(sum(2,3), 5);\n  });\n});</pre>" },
+            { d: "easy",   t: "<code>assert.equal</code> — == (приведение типов)<br><code>assert.strictEqual</code> — === (без приведения)" },
+            { d: "easy",   t: "Chai — библиотека утверждений. Подключение: <code>expect</code>, <code>should</code> или <code>assert</code> стиль." },
+            { d: "easy",   t: "<pre>expect(sum(2,3)).to.equal(5);\nexpect([1,2]).to.include(2);</pre>" },
+            { d: "easy",   t: "BDD: describe — контекст/группа, it — конкретный сценарий, expect — утверждение." },
+            { d: "easy",   t: "<code>before</code> — один раз перед всеми<br><code>beforeEach</code> — перед каждым it<br>after / afterEach — после" },
+            { d: "medium", t: "TDD: 1) пишем падающий тест (Red) 2) минимум кода чтобы прошёл (Green) 3) рефакторим (Refactor)" },
+            { d: "medium", t: "<pre>it('0 → 1', () => assert.equal(factorial(0), 1));\nit('отрицательное → ошибка', () => assert.throws(() => factorial(-1)));</pre>" },
+            { d: "medium", t: "Покрытие — % строк/веток/функций, покрытых тестами. Инструмент: c8 / nyc / istanbul + mocha." },
+            { d: "medium", t: "Stub — фиксированный ответ. Mock — проверяет вызовы (Sinon: sinon.stub(), sinon.mock()." },
+            { d: "medium", t: "Callback: <code>it('…', done => { … done(); })</code><br>Promise: <code>it('…', async () => { await … })</code> или return promise" },
+            { d: "medium", t: "<code>it.only</code> — только этот тест<br><code>it.skip</code> — пропустить (удобно при отладке)" },
+            { d: "medium", t: "<pre>expect(() => divide(10,0)).to.throw('Division by zero');</pre>" },
+            { d: "medium", t: "Обычно: test/unit/, test/integration/, test/e2e/. Файлы: user.service.test.js, auth.spec.ts" },
+            { d: "hard",   t: "Snapshot — снимок результата. Плюс: быстро ловит изменения. Минус: сложно понять, что именно сломалось." },
+            { d: "hard",   t: "Dependency Injection → передавать зависимости (api, db) → в тестах подменять stub/mock." },
+            { d: "hard",   t: "Генерирует тысячи случайных входов и проверяет свойства (fast-check / jsverify)." },
+            { d: "hard",   t: "GitHub Actions → job с <code>npm ci && npm test</code> на push / pull_request. Пример: actions/setup-node + coverage badge." },
+          ]
+        },
+
+        {
+          id: "polyfills",
+          title: "Полифилы",
+          icon: "🔧",
+          color: "#facc15",
+          tasks: [
+            { d: "easy",   t: "Полифил — код, добавляющий современную возможность в старые браузеры (Array.prototype.flat, Promise и т.д.)." },
+            { d: "easy",   t: "Полифил реализует API. Транспайлер (Babel) меняет синтаксис (class → function, arrow → function и т.д.)." },
+            { d: "easy",   t: "<pre>if (!Array.prototype.includes) { … }</pre> — feature detection." },
+            { d: "easy",   t: "<pre>if (!Array.prototype.includes) {\n  Array.prototype.includes = function(v, from) {\n    return this.indexOf(v, from) > -1;\n  };\n}</pre>" },
+            { d: "easy",   t: "core-js — самая популярная библиотека полифилов. Импорт: <code>import 'core-js/features/array/flat';</code>" },
+            { d: "easy",   t: "@babel/preset-env + browserslist + core-js автоматически добавляет нужные полифилы." },
+            { d: "medium", t: "<pre>Array.prototype.flat = function(depth = 1) {\n  return depth ? this.reduce((a,v) => a.concat(Array.isArray(v) ? v.flat(depth-1) : v), []) : this;\n};</pre>" },
+            { d: "medium", t: "<pre>Object.assign = function(t, ...s) {\n  s.forEach(src => { for (let k in src) t[k] = src[k]; });\n  return t;\n};</pre>" },
+            { d: "medium", t: "browserslist → определяет целевые браузеры → Babel + core-js добавляют только нужные полифилы." },
+            { d: "medium", t: "Promise: constructor, then, catch, finally, resolve, reject, all, allSettled, any, race." },
+            { d: "medium", t: "<code>useBuiltIns: 'usage'</code> → Babel смотрит, какие фичи используются в коде, и импортирует только нужные полифилы." },
+            { d: "medium", t: "Shim — пустая заглушка (console.log в IE). Полифил — полноценная реализация." },
+            { d: "hard",   t: "<pre>Array.prototype.flatMap = function(cb, thisArg) {\n  return this.map(cb, thisArg).flat();\n};</pre>" },
+            { d: "hard",   t: "<pre>const globalThis = (() => {\n  if (typeof globalThis !== 'undefined') return globalThis;\n  if (typeof window !== 'undefined') return window;\n  if (typeof global !== 'undefined') return global;\n  if (typeof self !== 'undefined') return self;\n  return {};\n})();</pre>" },
+            { d: "hard",   t: "Scoped polyfill — не трогает глобальный прототип. Пример: let Map = globalThis.Map || MyMapImpl;" },
+          ]
+        },
+      ];
+
+      // ── Остальной скрипт остаётся практически без изменений ───────────────
+      const STORAGE_KEY = "jsQualityAnswers_done";
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      let currentFilter = "all";
+      let searchQuery = "";
+      const TOTAL = TOPICS.reduce((sum, t) => sum + t.tasks.length, 0);
+
+      // renderAll, toggleDone, updateProgress, setFilter, filterTasks, applyFilter, resetAll
+      // копируй из оригинального кода — они работают точно так же
+
+      function renderAll() {
+        const root = document.getElementById("tasksRoot");
+        root.innerHTML = "";
+        let easy = 0, med = 0, hard = 0;
+        TOPICS.forEach(t => t.tasks.forEach(tk => {
+          if (tk.d === "easy") easy++;
+          else if (tk.d === "medium") med++;
+          else hard++;
+        }));
+        document.getElementById("easyCount").textContent = easy;
+        document.getElementById("medCount").textContent = med;
+        document.getElementById("hardCount").textContent = hard;
+
+        let num = 0;
+        TOPICS.forEach(topic => {
+          const sec = document.createElement("section");
+          sec.className = "topic-section";
+          sec.innerHTML = `
+            <div class="topic-header">
+              <div class="topic-icon" style="background:${topic.color}1a;color:${topic.color}">${topic.icon}</div>
+              <span class="topic-title">${topic.title}</span>
+              <div class="topic-meta">
+                <span class="topic-count">${topic.tasks.length} ответов</span>
+              </div>
+            </div>
+            <div class="task-grid"></div>
+          `;
+          const grid = sec.querySelector(".task-grid");
+
+          topic.tasks.forEach((task, i) => {
+            num++;
+            const id = `${topic.id}_${i}`;
+            const isDone = !!done[id];
+            const card = document.createElement("div");
+            card.className = `task-card${isDone ? " done" : ""}`;
+            card.style.setProperty("--card-color", topic.color);
+            card.style.setProperty("--card-glow", `${topic.color}0f`);
+            card.dataset.diff = task.d;
+            card.dataset.done = isDone ? "1" : "0";
+            card.dataset.text = (task.t + " " + (task.code || "")).replace(/<[^>]+>/g, "").toLowerCase();
+
+            const labels = { easy: "Лёгкое", medium: "Среднее", hard: "Сложное" };
+            const classes = { easy: "diff-easy", medium: "diff-medium", hard: "diff-hard" };
+
+            card.innerHTML = `
+              <div class="task-top">
+                <span class="task-num">#${String(num).padStart(3, "0")}</span>
+                <span class="difficulty ${classes[task.d]}">${labels[task.d]}</span>
+              </div>
+              <div class="task-text">${task.t}</div>
+              ${task.code ? `<div class="code-block">${task.code}</div>` : ""}
+              <div class="task-actions">
+                <button class="btn-done" onclick="toggleDone('${id}',this)">
+                  ${isDone ? "✅ Прочитано" : "○ Прочитано"}
+                </button>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          root.appendChild(sec);
+        });
+
+        updateProgress();
+        applyFilter();
+      }
+
+      // toggleDone, updateProgress, setFilter, filterTasks, applyFilter, resetAll — копируй из оригинала
+
+      renderAll();
+    </script>
+  </body>
+</html>
