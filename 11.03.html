@@ -1,0 +1,2591 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Решения — Функции</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap");
+      :root {
+        --bg: #0a0a0f;
+        --surface: #13131a;
+        --card: #1a1a25;
+        --border: #2a2a3d;
+        --accent: #a855f7;
+        --accent2: #f472b6;
+        --accent3: #f59e0b;
+        --accent4: #10b981;
+        --accent5: #ef4444;
+        --text: #e2e8f0;
+        --muted: #64748b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background:
+          radial-gradient(
+            ellipse at 15% 25%,
+            rgba(168, 85, 247, 0.09) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 85% 75%,
+            rgba(244, 114, 182, 0.07) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(16, 185, 129, 0.04) 0%,
+            transparent 60%
+          );
+        animation: bgShift 20s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes bgShift {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        100% {
+          transform: translate(1.5%, 2%) rotate(2deg);
+        }
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 1;
+      }
+      header {
+        padding: 60px 20px 40px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+      .badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #a855f7, #f472b6);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 6px 18px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: clamp(2.5rem, 6vw, 5rem);
+        font-weight: 900;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #fff 0%, #a855f7 45%, #f472b6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+      }
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 50px;
+      }
+      .stat-chip {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+      .stat-chip .num {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .progress-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .progress-label {
+        font-weight: 600;
+        font-size: 0.95rem;
+        white-space: nowrap;
+      }
+      .progress-bar-outer {
+        flex: 1;
+        min-width: 200px;
+        height: 8px;
+        background: var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-bar-inner {
+        height: 100%;
+        background: linear-gradient(90deg, #a855f7, #f472b6);
+        border-radius: 4px;
+        transition: width 0.4s ease;
+      }
+      .progress-count {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .btn-reset {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 16px;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .btn-reset:hover {
+        border-color: var(--accent5);
+        color: var(--accent5);
+      }
+      .controls {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .search-wrap {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+      }
+      .search-wrap input {
+        width: 100%;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 16px 12px 44px;
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-wrap input:focus {
+        border-color: var(--accent);
+      }
+      .search-wrap::before {
+        content: "🔍";
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .filter-btn {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 16px;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .filter-btn:hover,
+      .filter-btn.active {
+        border-color: var(--accent);
+        color: white;
+        background: rgba(168, 85, 247, 0.15);
+      }
+      .topic-section {
+        margin-bottom: 60px;
+      }
+      .topic-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        padding-top: 16px;
+        z-index: 10;
+      }
+      .topic-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+      }
+      .topic-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .topic-count {
+        margin-left: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        color: var(--muted);
+        background: var(--surface);
+        padding: 4px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+      }
+      .task-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .task-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--card-color, #a855f7),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .task-card:hover {
+        border-color: var(--card-color, #a855f7);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+      .task-card:hover::before {
+        opacity: 1;
+      }
+      .task-card.done {
+        background: rgba(16, 185, 129, 0.07);
+        border-color: rgba(16, 185, 129, 0.3);
+      }
+      .task-card.done::before {
+        opacity: 1;
+        background: linear-gradient(90deg, #10b981, transparent);
+      }
+      .task-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .task-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+        background: var(--surface);
+        padding: 3px 8px;
+        border-radius: 6px;
+      }
+      .difficulty {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 20px;
+      }
+      .diff-easy {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+      .diff-medium {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+      }
+      .diff-hard {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+      .task-text {
+        font-size: 0.93rem;
+        line-height: 1.65;
+        color: var(--text);
+        margin-bottom: 14px;
+      }
+      .task-text code {
+        font-family: "JetBrains Mono", monospace;
+        background: var(--surface);
+        color: #a855f7;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.85em;
+      }
+      .code-block {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 14px;
+        color: #94a3b8;
+        margin-bottom: 14px;
+        white-space: pre;
+        overflow-x: auto;
+        line-height: 1.6;
+      }
+      .task-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .btn-done {
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 16px;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: "Inter", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .btn-done:hover {
+        border-color: #10b981;
+        color: #10b981;
+      }
+      .task-card.done .btn-done {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: #10b981;
+        color: #10b981;
+      }
+      .float-counter {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #a855f7, #f472b6);
+        border-radius: 20px;
+        padding: 14px 22px;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 8px 30px rgba(168, 85, 247, 0.45);
+        z-index: 100;
+        transition: transform 0.2s;
+        cursor: default;
+      }
+      .float-counter:hover {
+        transform: scale(1.05);
+      }
+      .hidden {
+        display: none !important;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+      }
+      @media (max-width: 600px) {
+        .task-grid {
+          grid-template-columns: 1fr;
+        }
+        h1 {
+          font-size: 2.5rem;
+        }
+        .float-counter {
+          bottom: 16px;
+          right: 16px;
+          padding: 10px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="badge">✦ JavaScript Решения</div>
+      <h1>200 решений<br />Функции & Стрелки</h1>
+      <p class="subtitle">Готовые реализации · Function Expression · Стрелочные функции</p>
+      <div class="stats">
+        <div class="stat-chip"><span class="num">200</span>&nbsp;решений</div>
+        <div class="stat-chip"><span class="num">3</span>&nbsp;темы</div>
+        <div class="stat-chip"><span class="num" id="easyCount">0</span>&nbsp;лёгких</div>
+        <div class="stat-chip"><span class="num" id="medCount">0</span>&nbsp;средних</div>
+        <div class="stat-chip"><span class="num" id="hardCount">0</span>&nbsp;сложных</div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="progress-wrap">
+        <span class="progress-label">⚡ Прогресс изучения</span>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progressBar" style="width: 0%"></div>
+        </div>
+        <span class="progress-count" id="progressText">0 / 200</span>
+        <button class="btn-reset" onclick="resetAll()">Сбросить</button>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Поиск решения..." oninput="filterTasks()" />
+        </div>
+        <button class="filter-btn active" onclick="setFilter('all', this)">Все</button>
+        <button class="filter-btn" onclick="setFilter('easy', this)">Лёгкие</button>
+        <button class="filter-btn" onclick="setFilter('medium', this)">Средние</button>
+        <button class="filter-btn" onclick="setFilter('hard', this)">Сложные</button>
+        <button class="filter-btn" onclick="setFilter('done', this)">Изучено</button>
+        <button class="filter-btn" onclick="setFilter('undone', this)">Не изучено</button>
+      </div>
+      <div id="tasksRoot"></div>
+    </div>
+    <div class="float-counter" id="floatCounter">✅ 0 / 200</div>
+    <script>
+      const TOPICS = [
+        {
+          id: "functions",
+          title: "Функции",
+          icon: "⚙️",
+          color: "#a855f7",
+          tasks: [
+            {
+              d: "easy",
+              t: 'Напиши функцию <code>greet(name)</code>, которая возвращает строку <code>"Привет, name!"</code>.',
+              code: `function greet(name) {
+  return \`Привет, \${name}!\`;
+}
+console.log(greet("Алекс")); // Привет, Алекс!`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>sum(a, b)</code>, возвращающую сумму двух чисел.",
+              code: `function sum(a, b) {
+  return a + b;
+}
+console.log(sum(5, 7)); // 12`
+            },
+            {
+              d: "easy",
+              t: "Чем отличается <code>return</code> от <code>console.log</code> внутри функции?",
+              code: `<strong>return</strong> — возвращает значение из функции, чтобы его можно было использовать дальше.<br>
+<strong>console.log</strong> — просто выводит в консоль, функция возвращает <code>undefined</code>.
+Пример:
+function a() { console.log(42); }  → вернёт undefined
+function b() { return 42; }       → вернёт 42`
+            },
+            {
+              d: "easy",
+              t: "Что такое параметры функции? Чем они отличаются от аргументов?",
+              code: `<strong>Параметры</strong> — это имена в скобках при объявлении функции.<br>
+<strong>Аргументы</strong> — это реальные значения, которые передаются при вызове.
+function fn(x, y) { … }   ← параметры x, y
+fn(10, 20)                ← аргументы 10, 20`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>isEven(n)</code>, возвращающую <code>true</code> если число чётное.",
+              code: `function isEven(n) {
+  return n % 2 === 0;
+}
+// или побитовый способ (быстрее для целых чисел)
+function isEven(n) {
+  return (n & 1) === 0;
+}`
+            },
+            {
+              d: "easy",
+              t: "Что произойдёт если вызвать функцию с меньшим количеством аргументов чем параметров?",
+              code: `Недостающие параметры получат значение <code>undefined</code>.
+function fn(a, b, c) {
+  console.log(a, b, c);
+}
+fn(1, 2);   // 1 2 undefined`
+            },
+            {
+              d: "easy",
+              t: "Что такое параметры по умолчанию (default parameters)? Напиши пример.",
+              code: `function greet(name = "Гость") {
+  return "Привет, " + name + "!";
+}
+console.log(greet());      // Привет, Гость!
+console.log(greet("Мария")); // Привет, Мария!`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>power(base, exp = 2)</code> — возводит число в степень (по умолчанию в квадрат).",
+              code: `function power(base, exp = 2) {
+  return base ** exp;
+  // или Math.pow(base, exp);
+}
+console.log(power(5));     // 25
+console.log(power(2, 10)); // 1024`
+            },
+            {
+              d: "easy",
+              t: "Что такое <code>arguments</code>? Напиши функцию, выводящую все переданные аргументы.",
+              code: `function logAll() {
+  for (let arg of arguments) {
+    console.log(arg);
+  }
+  // или: console.log(Array.from(arguments));
+}
+logAll(10, "hi", true);`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>max(a, b, c)</code>, возвращающую наибольшее из трёх чисел.",
+              code: `function max(a, b, c) {
+  return Math.max(a, b, c);
+}
+// без Math.max
+function max(a, b, c) {
+  if (a >= b && a >= c) return a;
+  if (b >= c) return b;
+  return c;
+}`
+            },
+            {
+              d: "easy",
+              t: "Что такое rest-параметр <code>...args</code>? Напиши функцию <code>sumAll(...nums)</code>.",
+              code: `function sumAll(...nums) {
+  return nums.reduce((a, b) => a + b, 0);
+}
+console.log(sumAll(1,2,3,4)); // 10`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>repeat(str, n)</code>, которая повторяет строку <code>n</code> раз.",
+              code: `function repeat(str, n) {
+  return str.repeat(n);
+  // или старый способ:
+  // return new Array(n + 1).join(str);
+}
+console.log(repeat("ха", 5)); // хахахаха`
+            },
+            {
+              d: "easy",
+              t: "Что такое hoisting (поднятие) для функций объявленных через <code>function</code>?",
+              code: `Да, можно вызвать до объявления.
+console.log(sayHi()); // работает
+function sayHi() {
+  return "Привет";
+}`
+            },
+            {
+              d: "easy",
+              t: "Можно ли вызвать функцию до её объявления? Почему?",
+              code: `Да — для <strong>Function Declaration</strong> (hoisting).<br>
+Нет — для <strong>Function Expression</strong> и <strong>стрелочных</strong> (нет hoisting).`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>celsiusToFahrenheit(c)</code> — конвертация температуры.",
+              code: `function celsiusToFahrenheit(c) {
+  return c * 9/5 + 32;
+}
+console.log(celsiusToFahrenheit(0));   // 32
+console.log(celsiusToFahrenheit(100)); // 212`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>getFullName(firstName, lastName)</code>, возвращающую полное имя.",
+              code: `function getFullName(firstName, lastName) {
+  return \`\${firstName} \${lastName}\`.trim();
+}`
+            },
+            {
+              d: "easy",
+              t: "Что вернёт функция если в ней нет <code>return</code>?",
+              code: `<code>undefined</code>`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>absolute(n)</code> возвращающую модуль числа без использования <code>Math.abs</code>.",
+              code: `function absolute(n) {
+  return n < 0 ? -n : n;
+}
+// или битово (только для целых)
+function absolute(n) {
+  return (n ^ (n >> 31)) - (n >> 31);
+}`
+            },
+            {
+              d: "easy",
+              t: "Что такое рекурсия? Напиши функцию <code>countdown(n)</code>, выводящую числа от n до 0.",
+              code: `function countdown(n) {
+  if (n <= 0) {
+    console.log(0);
+    return;
+  }
+  console.log(n);
+  countdown(n - 1);
+}
+countdown(5);`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию <code>clamp(val, min, max)</code> ограничивающую значение в диапазоне.",
+              code: `function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+// или без Math
+function clamp(val, min, max) {
+  if (val < min) return min;
+  if (val > max) return max;
+  return val;
+}`
+            },
+            {
+              d: "medium",
+              t: "Что такое область видимости функции (function scope)? Чем она отличается от блочной?",
+              code: `<strong>function scope</strong> — переменные, объявленные через <code>var</code> внутри функции, видны только внутри неё.<br>
+<strong>block scope</strong> — <code>let</code> / <code>const</code> видны только внутри блока <code>{}</code>.`
+            },
+            {
+              d: "medium",
+              t: "Что такое замыкание (closure)? Напиши пример: функция-счётчик через замыкание.",
+              code: `function createCounter() {
+  let count = 0;
+  return {
+    inc()  { return ++count; },
+    dec()  { return --count; },
+    get()  { return count;   }
+  };
+}
+const counter = createCounter();
+console.log(counter.inc()); // 1
+console.log(counter.inc()); // 2
+console.log(counter.dec()); // 1`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>makeMultiplier(factor)</code> возвращающую функцию-умножитель.",
+              code: `function makeMultiplier(factor) {
+  return x => x * factor;
+}
+const triple = makeMultiplier(3);
+console.log(triple(10)); // 30`
+            },
+            {
+              d: "medium",
+              t: "Что такое чистая функция (pure function)? Приведи пример чистой и нечистой функции.",
+              code: `Чистая: всегда одинаковый вывод при одинаковом вводе, нет побочных эффектов.
+const add = (a, b) => a + b;           // чистая
+let c = 10;
+const impure = x => x + c++;          // нечистая`
+            },
+            {
+              d: "medium",
+              t: "Напиши рекурсивную функцию <code>factorial(n)</code>.",
+              code: `function factorial(n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
+}`
+            },
+            {
+              d: "medium",
+              t: "Что такое функция высшего порядка (higher-order function)? Приведи пример.",
+              code: `Функция, которая принимает или возвращает другую функцию.
+Array.map, Array.filter — классические примеры.
+function twice(fn) {
+  return x => fn(fn(x));
+}
+const double = x => x * 2;
+const quadruple = twice(double);
+console.log(quadruple(5)); // 20`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>compose(f, g)</code> — возвращает новую функцию <code>f(g(x))</code>.",
+              code: `function compose(f, g) {
+  return x => f(g(x));
+}
+const add1  = x => x + 1;
+const times2 = x => x * 2;
+const h = compose(times2, add1);
+console.log(h(5)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Что такое каррирование (currying)? Преобразуй <code>sum(a, b)</code> в каррированную форму.",
+              code: `const sum = a => b => a + b;
+console.log(sum(5)(7)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Чем отличается <code>call</code>, <code>apply</code> и <code>bind</code>? Напиши пример каждого.",
+              code: `<code>call</code>   — вызывает сразу, аргументы через запятую<br>
+<code>apply</code> — вызывает сразу, аргументы массивом<br>
+<code>bind</code>  — возвращает новую функцию, не вызывает
+obj.method.call(obj2, 1,2,3)
+obj.method.apply(obj2, [1,2,3])
+const bound = obj.method.bind(obj2)`
+            },
+            {
+              d: "medium",
+              t: "Что такое <code>this</code> внутри обычной функции? От чего зависит его значение?",
+              code: `Зависит от способа вызова:
+• fn()               → this = global / undefined (strict)
+• obj.method()       → this = obj
+• new Fn()           → this = новый объект
+• fn.call/apply/bind → this = явно указанный`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>memoize(fn)</code> кэширующую результаты вызовов.",
+              code: `function memoize(fn) {
+  const cache = new Map();
+  return function (...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+const slow = n => { /* долгий расчёт */ return n * n; };
+const fast = memoize(slow);`
+            },
+            {
+              d: "medium",
+              t: "Что такое IIFE (Immediately Invoked Function Expression)? Напиши пример и объясни зачем.",
+              code: `(function() {
+  let privateVar = 42;
+  console.log(privateVar);
+})(); // сразу вызывает, создаёт приватную область видимости`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>pipe(...fns)</code> применяющую функции слева направо.",
+              code: `function pipe(...fns) {
+  return x => fns.reduce((v, fn) => fn(v), x);
+}
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const f = pipe(add1, times2);
+console.log(f(5)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Что такое побочные эффекты (side effects) в функциях? Почему их стараются избегать?",
+              code: `Побочный эффект — изменение внешнего состояния (глобальные переменные, DOM, ввод-вывод).
+Их избегают для предсказуемости и тестируемости кода.`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>once(fn)</code> — позволяет вызвать <code>fn</code> только один раз.",
+              code: `function once(fn) {
+  let called = false;
+  return function(...args) {
+    if (called) return;
+    called = true;
+    return fn(...args);
+  };
+}
+const logOnce = once(console.log);
+logOnce("Hello"); // Hello
+logOnce("World"); // ничего`
+            },
+            {
+              d: "medium",
+              t: "Что произойдёт при рекурсии без базового случая? Что такое stack overflow?",
+              code: `Без базового случая функция будет вызывать себя бесконечно, пока не переполнится стек вызовов (stack overflow).
+function infinite() { infinite(); }
+infinite(); // Uncaught RangeError: Maximum call stack size exceeded`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>debounce(fn, delay)</code> — откладывает вызов до окончания серии событий.",
+              code: `function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+const logDebounced = debounce(console.log, 300);
+logDebounced("Hello"); // вызовется через 300мс, если не будет новых вызовов`
+            },
+            {
+              d: "medium",
+              t: "Что такое частичное применение (partial application)? Напиши функцию <code>partial(fn, ...args)</code>.",
+              code: `function partial(fn, ...args) {
+  return function(...moreArgs) {
+    return fn(...args, ...moreArgs);
+  };
+}
+const add = (a, b, c) => a + b + c;
+const add5 = partial(add, 5);
+console.log(add5(10, 20)); // 35`
+            },
+            {
+              d: "medium",
+              t: "Напиши рекурсивную функцию <code>deepClone(obj)</code> для глубокого копирования объекта.",
+              code: `function deepClone(obj) {
+  if (obj === null || typeof obj !== "object") return obj;
+  const clone = Array.isArray(obj) ? [] : {};
+  for (let key in obj) {
+    clone[key] = deepClone(obj[key]);
+  }
+  return clone;
+}`
+            },
+            {
+              d: "medium",
+              t: "Что такое хвостовая рекурсия? Перепиши <code>factorial</code> в хвосторекурсивную форму.",
+              code: `function factorial(n, acc = 1) {
+  if (n <= 1) return acc;
+  return factorial(n - 1, n * acc);
+}`
+            },
+            {
+              d: "hard",
+              t: "Реализуй функцию <code>curry(fn)</code> автоматически каррирующую функцию любой арности.",
+              code: `function curry(fn) {
+  const arity = fn.length;
+  return function curried(...args) {
+    if (args.length >= arity) {
+      return fn(...args);
+    }
+    return function (...more) {
+      return curried(...args, ...more);
+    };
+  };
+}
+function sum(a,b,c) { return a+b+c; }
+const csum = curry(sum);
+console.log(csum(1)(2)(3));     // 6
+console.log(csum(1,2)(3));      // 6
+console.log(csum(1)(2,3));      // 6`
+            },
+            {
+              d: "hard",
+              t: "Напиши функцию <code>trampoline(fn)</code> для устранения stack overflow в рекурсии.",
+              code: `function trampoline(fn) {
+  return function(...args) {
+    let result = fn(...args);
+    while (typeof result === "function") {
+      result = result();
+    }
+    return result;
+  };
+}
+function factorial(n, acc = 1) {
+  if (n <= 1) return acc;
+  return () => factorial(n - 1, n * acc);
+}
+const trampolined = trampoline(factorial);
+console.log(trampolined(10000)); // не переполнит стек`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>throttle(fn, limit)</code> — не более одного вызова за период <code>limit</code> мс.",
+              code: `function throttle(fn, limit) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      return fn(...args);
+    }
+  };
+}
+const logThrottled = throttle(console.log, 1000);
+logThrottled("Hello"); // вызовется
+logThrottled("World"); // не вызовется, если прошло меньше 1с`
+            },
+            {
+              d: "hard",
+              t: "Что такое монадический паттерн Maybe? Реализуй <code>Maybe</code> через функции.",
+              code: `function Maybe(value) {
+  return {
+    bind(fn) {
+      return value === null || value === undefined
+        ? Maybe(null)
+        : Maybe(fn(value));
+    },
+    getValue() { return value; }
+  };
+}
+const user = { name: "Alice" };
+const name = Maybe(user).bind(u => u.name).getValue();
+console.log(name); // Alice`
+            },
+            {
+              d: "hard",
+              t: "Напиши функцию <code>memoizeDeep(fn)</code> с глубоким сравнением аргументов-объектов.",
+              code: `function memoizeDeep(fn) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args, (k, v) =>
+      typeof v === "object" ? Object.keys(v).sort().reduce((o, k) => (o[k] = v[k], o), {}) : v
+    );
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>asyncCompose(...fns)</code> для асинхронных функций возвращающих Promise.",
+              code: `async function asyncCompose(...fns) {
+  return async x => {
+    for (const fn of fns.reverse()) {
+      x = await fn(x);
+    }
+    return x;
+  };
+}
+const add1 = async x => x + 1;
+const times2 = async x => x * 2;
+const f = asyncCompose(times2, add1);
+f(5).then(console.log); // 12`
+            },
+            {
+              d: "hard",
+              t: "Что такое замыкание над циклом? Объясни классическую ловушку с <code>var</code> в цикле.",
+              code: `// Ловушка с var:
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100); // 3, 3, 3
+}
+// Исправление с let:
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100); // 0, 1, 2
+}`
+            },
+            {
+              d: "hard",
+              t: "Напиши функцию <code>overload(...implementations)</code> диспетчеризующую по количеству аргументов.",
+              code: `function overload(...impls) {
+  return function(...args) {
+    const impl = impls.find(([len]) => len === args.length);
+    if (!impl) throw new Error("No implementation");
+    return impl[1](...args);
+  };
+}
+const fn = overload(
+  [1, x => x],
+  [2, (x, y) => x + y]
+);
+console.log(fn(5));     // 5
+console.log(fn(5, 7));  // 12`
+            },
+            {
+              d: "hard",
+              t: "Реализуй функцию <code>retry(fn, times)</code> — повторяет async-функцию при ошибке до <code>times</code> раз.",
+              code: `async function retry(fn, times) {
+  try {
+    return await fn();
+  } catch (err) {
+    if (times <= 1) throw err;
+    return retry(fn, times - 1);
+  }
+}
+const unstable = async () => {
+  if (Math.random() > 0.5) throw new Error("Oops");
+  return "Success";
+};
+retry(unstable, 3).then(console.log).catch(console.error);`
+            },
+            {
+              d: "hard",
+              t: "Что такое continuation-passing style (CPS)? Перепиши <code>factorial</code> в CPS.",
+              code: `function factorialCPS(n, cont) {
+  if (n <= 1) cont(1);
+  else factorialCPS(n - 1, res => cont(n * res));
+}
+factorialCPS(5, console.log); // 120`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>flatten</code> через рекурсию с накопителем (аккумулятором) для любой глубины.",
+              code: `function flatten(arr, acc = []) {
+  for (let item of arr) {
+    if (Array.isArray(item)) flatten(item, acc);
+    else acc.push(item);
+  }
+  return acc;
+}
+console.log(flatten([1, [2, [3, 4], 5]])); // [1, 2, 3, 4, 5]`
+            },
+            {
+              d: "hard",
+              t: "Напиши функцию <code>juxt(...fns)</code> — применяет все функции к аргументу, возвращает массив результатов.",
+              code: `function juxt(...fns) {
+  return x => fns.map(fn => fn(x));
+}
+const getFirstAndLast = juxt(
+  arr => arr[0],
+  arr => arr[arr.length - 1]
+);
+console.log(getFirstAndLast([1, 2, 3])); // [1, 3]`
+            },
+            {
+              d: "hard",
+              t: "Что такое функция-генератор <code>function*</code>? Напиши генератор бесконечной последовательности чисел.",
+              code: `function* numbers() {
+  let n = 0;
+  while (true) yield n++;
+}
+const gen = numbers();
+console.log(gen.next().value); // 0
+console.log(gen.next().value); // 1`
+            },
+            {
+              d: "hard",
+              t: "Реализуй паттерн <code>Observer</code> используя замыкания и функции (без классов).",
+              code: `function createObserver() {
+  const listeners = [];
+  return {
+    subscribe(fn) { listeners.push(fn); },
+    emit(data) { listeners.forEach(fn => fn(data)); }
+  };
+}
+const observer = createObserver();
+observer.subscribe(data => console.log(data));
+observer.emit("Hello"); // Hello`
+            },
+            {
+              d: "hard",
+              t: "Напиши функцию <code>createEnum(...keys)</code> возвращающую замороженный объект-перечисление.",
+              code: `function createEnum(...keys) {
+  const obj = {};
+  keys.forEach((key, i) => {
+    obj[key] = i;
+    obj[i] = key;
+  });
+  return Object.freeze(obj);
+}
+const Colors = createEnum("RED", "GREEN", "BLUE");
+console.log(Colors.RED); // 0
+console.log(Colors[0]);  // "RED"`
+            },
+            {
+              d: "hard",
+              t: "Что такое функциональная композиция? Докажи что <code>compose(f, g)(x) === f(g(x))</code>.",
+              code: `const compose = (f, g) => x => f(g(x));
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const h = compose(times2, add1);
+console.log(h(5)); // 12
+// Доказательство:
+// compose(f, g)(x) = f(g(x)) по определению`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>zip(...arrs)</code> принимающий произвольное число массивов через rest-параметры.",
+              code: `function zip(...arrs) {
+  const result = [];
+  const minLen = Math.min(...arrs.map(a => a.length));
+  for (let i = 0; i < minLen; i++) {
+    result.push(arrs.map(arr => arr[i]));
+  }
+  return result;
+}
+console.log(zip([1, 2], ["a", "b"])); // [[1, "a"], [2, "b"]]`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>createPrivate(init)</code> — объект с приватным состоянием только через замыкание.",
+              code: `function createPrivate(init) {
+  let state = init;
+  return {
+    get() { return state; },
+    set(value) { state = value; }
+  };
+}
+const obj = createPrivate(42);
+console.log(obj.get()); // 42
+obj.set(100);
+console.log(obj.get()); // 100`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>asyncPool(limit, tasks)</code> — выполняет async задачи с ограничением параллелизма.",
+              code: `async function asyncPool(limit, tasks) {
+  const results = [];
+  const executing = new Set();
+  for (const task of tasks) {
+    const p = task();
+    results.push(p);
+    executing.add(p);
+    p.then(() => executing.delete(p));
+    if (executing.size >= limit) await Promise.race(executing);
+  }
+  return Promise.all(results);
+}
+const tasks = Array(10).fill().map((_, i) =>
+  () => new Promise(res => setTimeout(() => res(i), 100 * i))
+);
+asyncPool(2, tasks).then(console.log); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]`
+            },
+            {
+              d: "hard",
+              t: "Что такое функтор (functor) в функциональном программировании? Реализуй Box-функтор через замыкание.",
+              code: `function Box(value) {
+  return {
+    map(fn) { return Box(fn(value)); },
+    get() { return value; }
+  };
+}
+const box = Box(5);
+const doubled = box.map(x => x * 2);
+console.log(doubled.get()); // 10`
+            }
+          ]
+        },
+        {
+          id: "funcexpr",
+          title: "Function Expression",
+          icon: "📝",
+          color: "#f472b6",
+          tasks: [
+            {
+              d: "easy",
+              t: "Что такое Function Expression? Напиши пример и сравни с Function Declaration.",
+              code: `Function Expression — функция, присвоенная переменной или свойству объекта.
+Пример:
+const greet = function(name) { return "Привет, " + name; };
+// Function Declaration:
+function greet(name) { return "Привет, " + name; }
+Разница: Declaration поднимается (hoisting), Expression — нет.`
+            },
+            {
+              d: "easy",
+              t: "Присвой функцию переменной <code>const square = ...</code> и вызови её.",
+              code: `const square = function(x) { return x * x; };
+console.log(square(5)); // 25`
+            },
+            {
+              d: "easy",
+              t: "Можно ли вызвать Function Expression до её объявления? Что произойдёт?",
+              code: `Нет, нельзя. Будет ошибка:
+console.log(square(5)); // ReferenceError
+const square = function(x) { return x * x; };`
+            },
+            {
+              d: "easy",
+              t: "Что такое анонимная функция? Напиши анонимный Function Expression.",
+              code: `Анонимная функция — Function Expression без имени.
+Пример:
+const greet = function() { return "Привет"; };
+// или сразу вызов:
+(function() { console.log("Аноним"); })();`
+            },
+            {
+              d: "easy",
+              t: "Напиши именованный Function Expression и объясни зачем нужно имя.",
+              code: `const factorial = function fact(n) {
+  return n <= 1 ? 1 : n * fact(n - 1);
+};
+// Имя нужно для рекурсии и отладки (в стеке вызовов).`
+            },
+            {
+              d: "easy",
+              t: "Передай Function Expression как аргумент в <code>setTimeout</code>.",
+              code: `setTimeout(function() {
+  console.log("Прошла секунда!");
+}, 1000);`
+            },
+            {
+              d: "easy",
+              t: "Что такое callback-функция? Напиши пример с <code>setTimeout</code>.",
+              code: `Callback — функция, передаваемая как аргумент и вызываемая позже.
+Пример:
+setTimeout(function() {
+  console.log("Callback выполнен!");
+}, 1000);`
+            },
+            {
+              d: "easy",
+              t: "Напиши <code>const multiply = function(a, b) { ... }</code> и вызови.",
+              code: `const multiply = function(a, b) { return a * b; };
+console.log(multiply(3, 4)); // 12`
+            },
+            {
+              d: "easy",
+              t: "Присвой функцию как значение свойства объекта (метод).",
+              code: `const obj = {
+  greet: function() { return "Привет!"; }
+};
+console.log(obj.greet()); // Привет!`
+            },
+            {
+              d: "easy",
+              t: "Напиши Function Expression принимающую другую функцию и вызывающую её.",
+              code: `const callFn = function(fn) { return fn(); };
+callFn(function() { return "Вызвано!"; }); // "Вызвано!"`
+            },
+            {
+              d: "easy",
+              t: "Что такое <code>typeof</code> для переменной содержащей функцию?",
+              code: `typeof function() {}; // "function"
+const fn = function() {};
+console.log(typeof fn); // "function"`
+            },
+            {
+              d: "easy",
+              t: "Передай Function Expression в метод массива <code>forEach</code>.",
+              code: `[1, 2, 3].forEach(function(item) {
+  console.log(item * 2);
+}); // 2, 4, 6`
+            },
+            {
+              d: "easy",
+              t: "Чем <code>const f = function foo() {}</code> отличается от <code>function foo() {}</code>?",
+              code: `const f = function foo() {}; // Function Expression, имя foo видно только внутри функции
+function foo() {} // Function Declaration, имя foo видно в текущей области видимости`
+            },
+            {
+              d: "easy",
+              t: "Напиши Function Expression с параметрами по умолчанию.",
+              code: `const greet = function(name = "Гость") {
+  return "Привет, " + name;
+};
+console.log(greet()); // Привет, Гость`
+            },
+            {
+              d: "easy",
+              t: "Можно ли переопределить переменную с Function Expression? Что происходит с <code>const</code>?",
+              code: `let fn = function() { return 1; };
+fn = function() { return 2; }; // можно
+const fn2 = function() { return 1; };
+// fn2 = function() { return 2; }; // TypeError: Assignment to constant variable.`
+            },
+            {
+              d: "easy",
+              t: "Напиши функцию выполняющую другую функцию дважды: <code>runTwice(fn)</code>.",
+              code: `const runTwice = function(fn) {
+  fn();
+  fn();
+};
+runTwice(function() { console.log("Выполнено!"); });
+// Выполнено!
+// Выполнено!`
+            },
+            {
+              d: "easy",
+              t: "Что произойдёт если вызвать переменную объявленную через <code>let</code> до присваивания функции?",
+              code: `console.log(fn); // ReferenceError: Cannot access 'fn' before initialization
+let fn = function() {};`
+            },
+            {
+              d: "easy",
+              t: "Напиши массив из трёх Function Expression и вызови каждую через цикл.",
+              code: `const fns = [
+  function() { return 1; },
+  function() { return 2; },
+  function() { return 3; }
+];
+fns.forEach(fn => console.log(fn())); // 1, 2, 3`
+            },
+            {
+              d: "easy",
+              t: 'Что такое функция как "first-class citizen" в JavaScript?',
+              code: `Функции — объекты первого класса: их можно присваивать переменным, передавать как аргументы, возвращать из других функций, хранить в структурах данных.
+Пример:
+const fn = function() {};
+const arr = [fn];`
+            },
+            {
+              d: "easy",
+              t: "Напиши Function Expression которая возвращает другую Function Expression.",
+              code: `const createGreeting = function(greeting) {
+  return function(name) {
+    return greeting + ", " + name;
+  };
+};
+const sayHi = createGreeting("Привет");
+console.log(sayHi("Алекс")); // Привет, Алекс`
+            },
+            {
+              d: "medium",
+              t: "В чём разница hoisting для Function Declaration и Function Expression?",
+              code: `Function Declaration поднимается полностью, Function Expression — как переменная (let/const).
+Пример:
+console.log(decl()); // работает
+function decl() { return 1; }
+console.log(expr()); // ReferenceError
+const expr = function() { return 2; };`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>apply(fn, value)</code> применяющую fn к value и возвращающую результат.",
+              code: `const apply = function(fn, value) {
+  return fn(value);
+};
+console.log(apply(x => x * 2, 5)); // 10`
+            },
+            {
+              d: "medium",
+              t: "Что такое немедленно вызываемое Function Expression (IIFE)? Покажи два синтаксиса.",
+              code: `(function() { console.log("IIFE 1"); })();
+(function() { console.log("IIFE 2"); }());`
+            },
+            {
+              d: "medium",
+              t: "Используй IIFE для создания модуля с приватными переменными.",
+              code: `const module = (function() {
+  let privateVar = 0;
+  return {
+    inc: function() { return ++privateVar; },
+    get: function() { return privateVar; }
+  };
+})();
+console.log(module.inc()); // 1`
+            },
+            {
+              d: "medium",
+              t: "Напиши <code>const factorial = function f(n) {...}</code> используя именованное выражение для рекурсии.",
+              code: `const factorial = function f(n) {
+  return n <= 1 ? 1 : n * f(n - 1);
+};
+console.log(factorial(5)); // 120`
+            },
+            {
+              d: "medium",
+              t: "Передай Function Expression в <code>map</code>, <code>filter</code>, <code>reduce</code> — по одному примеру.",
+              code: `[1, 2, 3].map(function(x) { return x * 2; }); // [2, 4, 6]
+[1, 2, 3].filter(function(x) { return x > 1; }); // [2, 3]
+[1, 2, 3].reduce(function(acc, x) { return acc + x; }, 0); // 6`
+            },
+            {
+              d: "medium",
+              t: "Что такое замыкание в контексте Function Expression? Напиши пример-счётчик.",
+              code: `const createCounter = function() {
+  let count = 0;
+  return function() { return ++count; };
+};
+const counter = createCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>createAdder(n)</code> через Function Expression, возвращающую прибавляющую функцию.",
+              code: `const createAdder = function(n) {
+  return function(x) { return n + x; };
+};
+const add5 = createAdder(5);
+console.log(add5(10)); // 15`
+            },
+            {
+              d: "medium",
+              t: "Что такое рекурсия через именованный Function Expression? Почему это надёжнее чем через имя переменной?",
+              code: `const factorial = function f(n) {
+  return n <= 1 ? 1 : n * f(n - 1);
+};
+// Надёжнее, потому что имя f не зависит от внешней области видимости.`
+            },
+            {
+              d: "medium",
+              t: "Напиши <code>const compose = function(f, g) {...}</code> и проверь работу.",
+              code: `const compose = function(f, g) {
+  return function(x) { return f(g(x)); };
+};
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const h = compose(times2, add1);
+console.log(h(5)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Как передать Function Expression в качестве обработчика события DOM?",
+              code: `document.querySelector("button").addEventListener("click", function() {
+  console.log("Клик!");
+});`
+            },
+            {
+              d: "medium",
+              t: 'Реализуй паттерн "стратегия" используя объект с Function Expression в качестве значений.',
+              code: `const strategies = {
+  add: function(a, b) { return a + b; },
+  subtract: function(a, b) { return a - b; }
+};
+function calculate(strategy, a, b) {
+  return strategies[strategy](a, b);
+}
+console.log(calculate("add", 5, 3)); // 8`
+            },
+            {
+              d: "medium",
+              t: "Что такое функция обратного вызова (callback)? Напиши свой <code>myForEach(arr, callback)</code>.",
+              code: `function myForEach(arr, callback) {
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i], i, arr);
+  }
+}
+myForEach([1, 2, 3], function(item) { console.log(item); }); // 1, 2, 3`
+            },
+            {
+              d: "medium",
+              t: "Напиши <code>const memoize = function(fn) {...}</code> кэширующую функцию через замыкание.",
+              code: `const memoize = function(fn) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+};
+const slow = n => { /* долгий расчёт */ return n * n; };
+const fast = memoize(slow);`
+            },
+            {
+              d: "medium",
+              t: "Чем <code>function.name</code> отличается для Declaration, именованного и анонимного Expression?",
+              code: `function decl() {}
+const named = function name() {};
+const anon = function() {};
+console.log(decl.name);   // "decl"
+console.log(named.name); // "name"
+console.log(anon.name);  // "" (пустая строка)`
+            },
+            {
+              d: "medium",
+              t: "Напиши функцию <code>createValidator(rules)</code> — принимает объект с правилами-функциями.",
+              code: `const createValidator = function(rules) {
+  return function(value) {
+    for (let key in rules) {
+      if (!rules[key](value)) return false;
+    }
+    return true;
+  };
+};
+const validator = createValidator({
+  isNumber: v => typeof v === "number",
+  isPositive: v => v > 0
+});
+console.log(validator(5)); // true`
+            },
+            {
+              d: "medium",
+              t: "Что произойдёт если внутри именованного Function Expression попытаться изменить его имя?",
+              code: `const fn = function name() {
+  name = 123; // Не изменит имя функции, но создаст переменную name (в strict mode — ошибка)
+  console.log(typeof name); // "function"
+};
+fn();`
+            },
+            {
+              d: "medium",
+              t: "Реализуй цепочку вызовов (method chaining) используя Function Expression.",
+              code: `const calculator = function() {
+  let value = 0;
+  return {
+    add: function(x) { value += x; return this; },
+    subtract: function(x) { value -= x; return this; },
+    get: function() { return value; }
+  };
+};
+const calc = calculator();
+console.log(calc.add(5).subtract(2).get()); // 3`
+            },
+            {
+              d: "medium",
+              t: "Напиши <code>const once = function(fn) {...}</code> — функцию, выполняемую только один раз.",
+              code: `const once = function(fn) {
+  let called = false;
+  return function(...args) {
+    if (called) return;
+    called = true;
+    return fn(...args);
+  };
+};
+const logOnce = once(console.log);
+logOnce("Hello"); // Hello
+logOnce("World"); // ничего`
+            },
+            {
+              d: "medium",
+              t: 'Что такое "функциональный интерфейс" (functional interface)? Как Function Expression его реализует?',
+              code: `Функциональный интерфейс — объект с одним методом, который можно передавать как функцию.
+Пример:
+const logger = {
+  log: function(message) { console.log(message); }
+};
+// Использование как функции:
+logger.log("Hello");`
+            },
+            {
+              d: "hard",
+              t: "Реализуй Y-комбинатор через Function Expression для анонимной рекурсии.",
+              code: `const Y = function(f) {
+  return (function(g) { return g(g); })(function(h) {
+    return f(function(...args) { return h(h)(...args); });
+  });
+};
+const factorial = Y(function(recurse) {
+  return function(n) { return n <= 1 ? 1 : n * recurse(n - 1); };
+});
+console.log(factorial(5)); // 120`
+            },
+            {
+              d: "hard",
+              t: "Что такое замыкание над мутируемой переменной? Напиши ловушку и её исправление.",
+              code: `// Ловушка:
+const createCounters = function() {
+  let count = 0;
+  const counters = [];
+  for (var i = 0; i < 3; i++) {
+    counters.push(function() { return ++count; });
+  }
+  return counters;
+};
+const counters = createCounters();
+console.log(counters[0]()); // 1
+console.log(counters[1]()); // 2 (ожидалось 1)
+// Исправление:
+const createFixedCounters = function() {
+  const counters = [];
+  for (let i = 0; i < 3; i++) {
+    let count = 0;
+    counters.push(function() { return ++count; });
+  }
+  return counters;
+};`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const pipeline = function(...fns) {...}</code> для цепочечной обработки данных.",
+              code: `const pipeline = function(...fns) {
+  return function(x) {
+    return fns.reduce((v, fn) => fn(v), x);
+  };
+};
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const f = pipeline(add1, times2);
+console.log(f(5)); // 12`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const curry = function(fn) {...}</code> автоматически каррирующую через замыкание.",
+              code: `const curry = function(fn) {
+  const arity = fn.length;
+  return function curried(...args) {
+    if (args.length >= arity) {
+      return fn(...args);
+    }
+    return function(...more) {
+      return curried(...args, ...more);
+    };
+  };
+};
+function sum(a, b, c) { return a + b + c; }
+const csum = curry(sum);
+console.log(csum(1)(2)(3)); // 6`
+            },
+            {
+              d: "hard",
+              t: 'Что такое "частичное применение" через Function Expression? Реализуй <code>partial</code>.',
+              code: `const partial = function(fn, ...args) {
+  return function(...moreArgs) {
+    return fn(...args, ...moreArgs);
+  };
+};
+const add = (a, b, c) => a + b + c;
+const add5 = partial(add, 5);
+console.log(add5(10, 20)); // 35`
+            },
+            {
+              d: "hard",
+              t: 'Реализуй паттерн "Decorator" через Function Expression обворачивающую оригинальную функцию.',
+              code: `const decorator = function(fn, wrapper) {
+  return function(...args) {
+    return wrapper(fn, ...args);
+  };
+};
+const logCall = function(fn, ...args) {
+  console.log(\`Вызов \${fn.name} с аргументами: \${args}\`);
+  return fn(...args);
+};
+const sum = (a, b) => a + b;
+const loggedSum = decorator(sum, logCall);
+console.log(loggedSum(5, 7)); // Вызов sum с аргументами: 5,7 → 12`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const lazy = function(fn) {...}</code> — откладывает вычисление до первого обращения.",
+              code: `const lazy = function(fn) {
+  let cached;
+  return function(...args) {
+    if (cached === undefined) {
+      cached = fn(...args);
+    }
+    return cached;
+  };
+};
+const expensive = x => { console.log("Вычисление..."); return x * x; };
+const lazyExpensive = lazy(expensive);
+console.log(lazyExpensive(5)); // Вычисление... → 25
+console.log(lazyExpensive(5)); // 25 (без вычисления)`
+            },
+            {
+              d: "hard",
+              t: "Что происходит с <code>this</code> в Function Expression используемой как метод vs как callback?",
+              code: `const obj = {
+  value: 42,
+  method: function() { return this.value; }
+};
+console.log(obj.method()); // 42 (this = obj)
+const fn = obj.method;
+console.log(fn()); // undefined (this = global/window или undefined в strict mode)`
+            },
+            {
+              d: "hard",
+              t: "Реализуй EventEmitter через замыкание: <code>on</code>, <code>off</code>, <code>emit</code> как Function Expression.",
+              code: `const createEmitter = function() {
+  const listeners = {};
+  return {
+    on: function(event, fn) {
+      if (!listeners[event]) listeners[event] = [];
+      listeners[event].push(fn);
+    },
+    off: function(event, fn) {
+      if (listeners[event]) {
+        listeners[event] = listeners[event].filter(l => l !== fn);
+      }
+    },
+    emit: function(event, ...args) {
+      (listeners[event] || []).forEach(fn => fn(...args));
+    }
+  };
+};
+const emitter = createEmitter();
+emitter.on("click", () => console.log("Clicked!"));
+emitter.emit("click"); // Clicked!`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const memoizeAsync = function(fn) {...}</code> для кэширования async функций.",
+              code: `const memoizeAsync = function(fn) {
+  const cache = new Map();
+  return async function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = await fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+};
+const slowAsync = async n => { /* долгий расчёт */ return n * n; };
+const fastAsync = memoizeAsync(slowAsync);`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const sequence = function(...fns) {...}</code> — выполняет функции последовательно передавая результат.",
+              code: `const sequence = function(...fns) {
+  return function(x) {
+    return fns.reduce(async (promise, fn) => {
+      const result = await promise;
+      return fn(result);
+    }, Promise.resolve(x));
+  };
+};
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const asyncAdd1 = async x => x + 1;
+const f = sequence(add1, times2, asyncAdd1);
+f(5).then(console.log); // 13`
+            },
+            {
+              d: "hard",
+              t: 'Что такое "функция первого класса"? Докажи это свойство тремя конкретными примерами с Function Expression.',
+              code: `1. Присваивание переменной:
+const fn = function() {};
+2. Передача как аргумент:
+[1, 2, 3].map(function(x) { return x * 2; });
+3. Возврат из функции:
+function createFn() { return function() {}; }`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const createStateMachine = function(transitions) {...}</code> через замыкание.",
+              code: `const createStateMachine = function(transitions) {
+  let state = transitions.start;
+  return {
+    transition: function(action) {
+      const next = transitions[state] && transitions[state][action];
+      if (next) state = next;
+      return state;
+    },
+    getState: function() { return state; }
+  };
+};
+const machine = createStateMachine({
+  start: { next: "middle" },
+  middle: { next: "end", prev: "start" },
+  end: {}
+});
+console.log(machine.transition("next")); // middle`
+            },
+            {
+              d: "hard",
+              t: "Реализуй систему middleware через Function Expression: <code>const use = function(fn) {...}</code>.",
+              code: `const createApp = function() {
+  const middlewares = [];
+  return {
+    use: function(fn) { middlewares.push(fn); },
+    run: function(context) {
+      let index = 0;
+      const dispatch = function(i) {
+        if (i <= index) throw new Error("next() called multiple times");
+        index = i;
+        const fn = middlewares[i];
+        if (!fn) return;
+        return fn(context, dispatch.bind(null, i + 1));
+      };
+      return dispatch(0);
+    }
+  };
+};
+const app = createApp();
+app.use(function(ctx, next) { console.log("Start"); next(); });
+app.use(function(ctx, next) { console.log("End"); });
+app.run({}); // Start → End`
+            },
+            {
+              d: "hard",
+              t: "Что такое referential transparency? Напиши пример Function Expression удовлетворяющей этому свойству.",
+              code: `Referential transparency — свойство функции, при котором её вызов можно заменить на её результат без изменения поведения программы.
+Пример:
+const add = function(a, b) { return a + b; };
+// add(2, 3) всегда можно заменить на 5`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const memoizeWithTTL = function(fn, ttl) {...}</code> — кэш с временем жизни.",
+              code: `const memoizeWithTTL = function(fn, ttl) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    const entry = cache.get(key);
+    if (entry && Date.now() - entry.time < ttl) {
+      return entry.value;
+    }
+    const result = fn(...args);
+    cache.set(key, { value: result, time: Date.now() });
+    return result;
+  };
+};
+const slow = n => { /* долгий расчёт */ return n * n; };
+const fast = memoizeWithTTL(slow, 1000);`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const createStore = function(reducer, initialState) {...}</code> — мини-Redux через замыкание.",
+              code: `const createStore = function(reducer, initialState) {
+  let state = initialState;
+  const listeners = [];
+  return {
+    getState: function() { return state; },
+    dispatch: function(action) {
+      state = reducer(state, action);
+      listeners.forEach(fn => fn());
+    },
+    subscribe: function(fn) { listeners.push(fn); }
+  };
+};
+const reducer = (state, action) => action.type === "INC" ? state + 1 : state;
+const store = createStore(reducer, 0);
+store.subscribe(() => console.log(store.getState()));
+store.dispatch({ type: "INC" }); // 1`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const promisify = function(fn) {...}</code> — конвертирует callback API в Promise.",
+              code: `const promisify = function(fn) {
+  return function(...args) {
+    return new Promise((resolve, reject) => {
+      fn(...args, function(err, result) {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  };
+};
+const readFile = promisify(function(path, cb) {
+  /* асинхронное чтение файла */
+  cb(null, "content");
+});
+readFile("file.txt").then(console.log); // content`
+            },
+            {
+              d: "hard",
+              t: 'Что такое "функциональный паттерн Flyweight"? Реализуй через Function Expression и замыкания.',
+              code: `Flyweight — паттерн, позволяющий разделять общие данные между объектами для экономии памяти.
+Пример:
+const createFlyweight = function() {
+  const shared = { type: "default" };
+  return function(data) {
+    return { ...shared, ...data };
+  };
+};
+const createItem = createFlyweight();
+const item1 = createItem({ id: 1 });
+const item2 = createItem({ id: 2 });
+console.log(item1.type); // default`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const createDI = function() {...}</code> — простой контейнер внедрения зависимостей через замыкание.",
+              code: `const createDI = function() {
+  const services = {};
+  return {
+    register: function(name, factory) { services[name] = factory; },
+    get: function(name) {
+      if (!services[name]) throw new Error("Service not found");
+      if (typeof services[name] === "function") {
+        services[name] = services[name]();
+      }
+      return services[name];
+    }
+  };
+};
+const di = createDI();
+di.register("logger", () => ({ log: console.log }));
+const logger = di.get("logger");
+logger.log("Hello"); // Hello`
+            }
+          ]
+        },
+        {
+          id: "arrows",
+          title: "Стрелочные функции",
+          icon: "🏹",
+          color: "#34d399",
+          tasks: [
+            {
+              d: "easy",
+              t: "Что такое стрелочная функция? Перепиши <code>function sum(a,b){return a+b}</code> как стрелочную.",
+              code: `Стрелочная функция — краткий синтаксис для Function Expression, не имеет своего this, arguments, не может быть конструктором.
+const sum = (a, b) => a + b;
+console.log(sum(2, 3)); // 5`
+            },
+            {
+              d: "easy",
+              t: "Как записать стрелочную функцию с одним параметром без скобок?",
+              code: `const double = x => x * 2;
+console.log(double(5)); // 10`
+            },
+            {
+              d: "easy",
+              t: "Как записать стрелочную функцию возвращающую значение без <code>return</code> (implicit return)?",
+              code: `const square = x => x * x;
+console.log(square(4)); // 16`
+            },
+            {
+              d: "easy",
+              t: "Как стрелочная функция возвращает объект через implicit return? Почему нужны скобки?",
+              code: `const getObj = () => ({ key: "value" });
+// Скобки нужны, чтобы отличить объект от блока кода.
+console.log(getObj()); // { key: "value" }`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию <code>double</code> удваивающую число.",
+              code: `const double = x => x * 2;
+console.log(double(7)); // 14`
+            },
+            {
+              d: "easy",
+              t: 'Перепиши <code>const greet = function(name) { return "Hi " + name; }</code> как стрелку.',
+              code: `const greet = name => "Hi " + name;
+console.log(greet("Alice")); // Hi Alice`
+            },
+            {
+              d: "easy",
+              t: "Используй стрелочную функцию в <code>[1,2,3].map(...)</code> для возведения в квадрат.",
+              code: `[1, 2, 3].map(x => x * x); // [1, 4, 9]`
+            },
+            {
+              d: "easy",
+              t: "Используй стрелочную функцию в <code>[1,2,3,4,5].filter(...)</code> для чётных чисел.",
+              code: `[1, 2, 3, 4, 5].filter(x => x % 2 === 0); // [2, 4]`
+            },
+            {
+              d: "easy",
+              t: "Используй стрелочную функцию в <code>[1,2,3,4,5].reduce(...)</code> для суммы.",
+              code: `[1, 2, 3, 4, 5].reduce((acc, x) => acc + x, 0); // 15`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию без параметров возвращающую текущее время.",
+              code: `const getTime = () => new Date().toLocaleTimeString();
+console.log(getTime()); // например, "14:30:45"`
+            },
+            {
+              d: "easy",
+              t: "Чем синтаксис стрелочной функции короче Function Expression? Покажи три сокращения.",
+              code: `1. Нет ключевого слова function:
+   (a, b) => a + b
+   вместо
+   function(a, b) { return a + b; }
+
+2. Нет скобок для одного параметра:
+   x => x * 2
+   вместо
+   function(x) { return x * 2; }
+
+3. Implicit return для однострочных функций:
+   x => x * x
+   вместо
+   function(x) { return x * x; }`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию <code>isPositive</code> проверяющую что число > 0.",
+              code: `const isPositive = x => x > 0;
+console.log(isPositive(5)); // true`
+            },
+            {
+              d: "easy",
+              t: "Передай стрелочную функцию в <code>setTimeout</code>.",
+              code: `setTimeout(() => console.log("Прошла секунда!"), 1000);`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию с несколькими строками тела (с фигурными скобками).",
+              code: `const greet = name => {
+  const message = "Привет, " + name;
+  return message.toUpperCase();
+};
+console.log(greet("Алекс")); // ПРИВЕТ, АЛЕКС`
+            },
+            {
+              d: "easy",
+              t: 'Напиши стрелочную функцию с параметром по умолчанию: <code>const greet = (name = "World") => ...</code>.',
+              code: `const greet = (name = "World") => "Hello, " + name;
+console.log(greet()); // Hello, World`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию с rest-параметром: <code>const sumAll = (...nums) => ...</code>.",
+              code: `const sumAll = (...nums) => nums.reduce((a, b) => a + b, 0);
+console.log(sumAll(1, 2, 3)); // 6`
+            },
+            {
+              d: "easy",
+              t: 'Перепиши callback в <code>setTimeout(function(){console.log("done")}, 1000)</code> на стрелку.',
+              code: `setTimeout(() => console.log("done"), 1000);`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию <code>getLength</code> возвращающую длину строки.",
+              code: `const getLength = str => str.length;
+console.log(getLength("hello")); // 5`
+            },
+            {
+              d: "easy",
+              t: "Используй стрелочную функцию в <code>array.sort()</code> для сортировки по убыванию.",
+              code: `[3, 1, 4, 2].sort((a, b) => b - a); // [4, 3, 2, 1]`
+            },
+            {
+              d: "easy",
+              t: "Напиши стрелочную функцию принимающую объект и возвращающую одно из его свойств.",
+              code: `const getName = obj => obj.name;
+console.log(getName({ name: "Alice" })); // Alice`
+            },
+            {
+              d: "medium",
+              t: "В чём главное отличие <code>this</code> в стрелочной функции от обычной?",
+              code: `Стрелочная функция не имеет своего this, а наследует его из внешней области видимости (лексический this).
+Пример:
+const obj = {
+  value: 42,
+  getValue: function() {
+    const arrow = () => this.value;
+    return arrow();
+  }
+};
+console.log(obj.getValue()); // 42`
+            },
+            {
+              d: "medium",
+              t: "Почему стрелочные функции не подходят как методы объекта? Покажи проблему с <code>this</code>.",
+              code: `const obj = {
+  value: 42,
+  getValue: () => this.value // this ссылается на глобальный объект, а не на obj
+};
+console.log(obj.getValue()); // undefined`
+            },
+            {
+              d: "medium",
+              t: "Что такое лексический <code>this</code>? Покажи классическую проблему с <code>setTimeout</code> и её решение стрелкой.",
+              code: `const obj = {
+  value: 42,
+  logLater: function() {
+    // Проблема:
+    setTimeout(function() {
+      console.log(this.value); // undefined
+    }, 100);
+    // Решение:
+    setTimeout(() => {
+      console.log(this.value); // 42
+    }, 100);
+  }
+};
+obj.logLater();`
+            },
+            {
+              d: "medium",
+              t: "Можно ли использовать <code>arguments</code> в стрелочной функции? Что происходит?",
+              code: `Нет, в стрелочных функциях нет объекта arguments.
+const fn = (...args) => console.log(args);
+fn(1, 2, 3); // [1, 2, 3] — используйте rest-параметры`
+            },
+            {
+              d: "medium",
+              t: "Можно ли использовать стрелочную функцию как конструктор с <code>new</code>? Что произойдёт?",
+              code: `Нет, стрелочные функции не могут быть конструкторами.
+const Fn = () => {};
+new Fn(); // TypeError: Fn is not a constructor`
+            },
+            {
+              d: "medium",
+              t: "Есть ли у стрелочных функций <code>prototype</code>?",
+              code: `Нет, у стрелочных функций нет prototype.
+const fn = () => {};
+console.log(fn.prototype); // undefined`
+            },
+            {
+              d: "medium",
+              t: "Напиши класс с методом использующим стрелочную функцию в callback чтобы сохранить <code>this</code>.",
+              code: `class Logger {
+  constructor() {
+    this.value = 42;
+  }
+  logLater() {
+    setTimeout(() => {
+      console.log(this.value); // 42
+    }, 100);
+  }
+}
+new Logger().logLater();`
+            },
+            {
+              d: "medium",
+              t: "Напиши каррированную функцию через стрелки: <code>const add = a => b => a + b</code> и вызови её.",
+              code: `const add = a => b => a + b;
+console.log(add(5)(7)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Реализуй <code>compose</code> через стрелочные функции в одну строку.",
+              code: `const compose = (...fns) => x => fns.reduceRight((v, fn) => fn(v), x);
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const f = compose(times2, add1);
+console.log(f(5)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Напиши стрелочную функцию возвращающую стрелочную функцию (фабрика).",
+              code: `const createMultiplier = factor => x => x * factor;
+const double = createMultiplier(2);
+console.log(double(5)); // 10`
+            },
+            {
+              d: "medium",
+              t: 'Что такое "стрелочная функция как метод класса" (class field)? Напиши пример и объясни разницу от метода прототипа.',
+              code: `Стрелочная функция как метод класса (class field) не имеет доступа к this класса.
+Пример:
+class Logger {
+  value = 42;
+  log = () => console.log(this.value);
+}
+const logger = new Logger();
+const { log } = logger;
+log(); // 42 (this сохраняется)
+Разница: метод прототипа теряет this при копировании, стрелочный — нет.`
+            },
+            {
+              d: "medium",
+              t: "Перепиши цепочку <code>.map().filter().reduce()</code> используя только стрелочные функции.",
+              code: `[1, 2, 3, 4, 5]
+  .map(x => x * 2)
+  .filter(x => x > 5)
+  .reduce((acc, x) => acc + x, 0); // 18`
+            },
+            {
+              d: "medium",
+              t: "Можно ли деструктурировать параметры в стрелочной функции? Напиши пример с объектом.",
+              code: `const getName = ({ name, age }) => name;
+console.log(getName({ name: "Alice", age: 25 })); // Alice`
+            },
+            {
+              d: "medium",
+              t: "Напиши стрелочную функцию с деструктуризацией массива в параметрах.",
+              code: `const sumFirstTwo = ([a, b]) => a + b;
+console.log(sumFirstTwo([5, 7, 9])); // 12`
+            },
+            {
+              d: "medium",
+              t: 'Что такое "неявный возврат объекта" в стрелке? Напиши функцию маппинга массива в массив объектов.',
+              code: `Неявный возврат объекта — возврат объекта без return, но со скобками.
+const toObjects = arr => arr.map(x => ({ value: x }));
+console.log(toObjects([1, 2])); // [{ value: 1 }, { value: 2 }]`
+            },
+            {
+              d: "medium",
+              t: "Чем отличается стрелочная функция от Function Expression в контексте метода <code>bind</code>?",
+              code: `Стрелочная функция не может быть привязана через bind — её this фиксирован.
+const fn = () => this;
+const bound = fn.bind({ value: 42 });
+console.log(bound()); // global/window, а не { value: 42 }`
+            },
+            {
+              d: "medium",
+              t: "Напиши стрелочную функцию-предикат для <code>Array.prototype.every</code>.",
+              code: `const allPositive = arr => arr.every(x => x > 0);
+console.log(allPositive([1, 2, 3])); // true`
+            },
+            {
+              d: "medium",
+              t: "Реализуй <code>pipe</code> через стрелочные функции: <code>const pipe = (...fns) => x => ...</code>.",
+              code: `const pipe = (...fns) => x => fns.reduce((v, fn) => fn(v), x);
+const add1 = x => x + 1;
+const times2 = x => x * 2;
+const f = pipe(add1, times2);
+console.log(f(5)); // 12`
+            },
+            {
+              d: "medium",
+              t: "Что произойдёт если попытаться вызвать <code>.call()</code> или <code>.apply()</code> на стрелочной функции с другим <code>this</code>?",
+              code: `this не изменится, так как стрелочная функция наследует this из внешней области видимости.
+const fn = () => this;
+fn.call({ value: 42 }); // global/window, а не { value: 42 }`
+            },
+            {
+              d: "medium",
+              t: "Напиши обработчик событий с сохранением контекста через стрелочную функцию внутри класса.",
+              code: `class Button {
+  constructor() {
+    this.value = 42;
+    this.element = document.createElement("button");
+    this.element.addEventListener("click", () => {
+      console.log(this.value); // 42
+    });
+  }
+}`
+            },
+            {
+              d: "hard",
+              t: "Объясни почему стрелочные функции нельзя использовать как генераторы (<code>function*</code>).",
+              code: `Стрелочные функции не могут быть генераторами, так как у них нет собственного this, arguments и они не могут использоваться с yield.
+function* gen() { yield 1; } // OK
+const arrow = *() => { yield 1; }; // SyntaxError`
+            },
+            {
+              d: "hard",
+              t: "Реализуй Y-комбинатор используя только стрелочные функции.",
+              code: `const Y = f => (x => x(x))(y => f(x => y(y)(x)));
+const factorial = Y(f => n => n <= 1 ? 1 : n * f(n - 1));
+console.log(factorial(5)); // 120`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const memoize = fn => { ... }</code> через стрелки с WeakMap для объектных аргументов.",
+              code: `const memoize = fn => {
+  const cache = new WeakMap();
+  return arg => {
+    if (cache.has(arg)) return cache.get(arg);
+    const result = fn(arg);
+    cache.set(arg, result);
+    return result;
+  };
+};
+const slow = obj => { /* долгий расчёт */ return obj.value * 2; };
+const fast = memoize(slow);`
+            },
+            {
+              d: "hard",
+              t: "Объясни разницу лексического <code>this</code> в стрелках внутри методов объекта vs внутри конструктора класса.",
+              code: `Внутри метода объекта: this ссылается на объект, если стрелочная функция объявлена внутри метода.
+Внутри конструктора класса: this ссылается на экземпляр класса, даже если стрелочная функция объявлена как метод.
+Пример:
+class Logger {
+  constructor() {
+    this.value = 42;
+    this.log = () => console.log(this.value);
+  }
+}
+const log = new Logger().log;
+log(); // 42`
+            },
+            {
+              d: "hard",
+              t: "Реализуй полноценный <code>curry</code> через стрелочные функции: <code>const curry = fn => ...</code>.",
+              code: `const curry = fn => {
+  const arity = fn.length;
+  return function curried(...args) {
+    if (args.length >= arity) return fn(...args);
+    return (...more) => curried(...args, ...more);
+  };
+};
+const sum = (a, b, c) => a + b + c;
+const csum = curry(sum);
+console.log(csum(1)(2)(3)); // 6`
+            },
+            {
+              d: "hard",
+              t: "Напиши цепочку стрелочных функций реализующую паттерн Builder для создания объекта конфигурации.",
+              code: `const createConfig = () => {
+  let config = {};
+  return {
+    set: (key, value) => { config[key] = value; return this; },
+    get: () => config
+  };
+};
+const builder = createConfig();
+const config = builder.set("debug", true).set("logLevel", "info").get();
+console.log(config); // { debug: true, logLevel: "info" }`
+            },
+            {
+              d: "hard",
+              t: 'Что такое "arrow function в prototype"? Почему это анти-паттерн? Покажи проблему с памятью.',
+              code: `Arrow function в prototype создаёт новую функцию для каждого экземпляра, что увеличивает расход памяти.
+Пример анти-паттерна:
+class Logger {
+  constructor() {}
+  log = () => console.log("Log");
+}
+// Каждый экземпляр будет иметь свою копию log, а не разделять одну в прототипе.`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const trampoline = fn => (...args) => {...}</code> через стрелочные функции.",
+              code: `const trampoline = fn => (...args) => {
+  let result = fn(...args);
+  while (typeof result === "function") {
+    result = result();
+  }
+  return result;
+};
+const factorial = (n, acc = 1) => n <= 1 ? acc : () => factorial(n - 1, n * acc);
+const trampolined = trampoline(factorial);
+console.log(trampolined(10000)); // не переполнит стек`
+            },
+            {
+              d: "hard",
+              t: "Напиши стрелочную функцию реализующую бесточечный стиль (point-free style) для обработки массива.",
+              code: `const map = fn => arr => arr.map(fn);
+const filter = fn => arr => arr.filter(fn);
+const doubleEvens = filter(x => x % 2 === 0)(map(x => x * 2)([1, 2, 3, 4]));
+console.log(doubleEvens); // [4, 8]`
+            },
+            {
+              d: "hard",
+              t: "Реализуй <code>const asyncPipe = (...fns) => x => ...</code> для цепочки async/await функций.",
+              code: `const asyncPipe = (...fns) => x => fns.reduce(async (promise, fn) => fn(await promise), Promise.resolve(x));
+const add1 = async x => x + 1;
+const times2 = async x => x * 2;
+const f = asyncPipe(add1, times2);
+f(5).then(console.log); // 12`
+            },
+            {
+              d: "hard",
+              t: 'Что такое "стрелочная функция и деструктуризация с переименованием и дефолтами"? Напиши сложный пример.',
+              code: `const getUserInfo = ({ name: userName = "Anonymous", age: userAge = 18 }) => ({
+  userName,
+  userAge
+});
+console.log(getUserInfo({ age: 25 })); // { userName: "Anonymous", userAge: 25 }`
+            },
+            {
+              d: "hard",
+              t: "Объясни как стрелочные функции влияют на производительность в горячих путях (hot paths) кода.",
+              code: `Стрелочные функции могут быть медленнее в горячих путях, так как:
+1. Не оптимизируются некоторыми движками так же хорошо, как Function Declaration.
+2. Создают новую область видимости для this и arguments при каждом вызове.
+3. Могут препятствовать встраиванию (inlining) в JIT-компиляторе.
+Для горячих путей лучше использовать Function Declaration или вынести стрелочную функцию за пределы цикла.`
+            },
+            {
+              d: "hard",
+              t: "Реализуй функциональный <code>Option/Maybe</code> тип используя только стрелочные функции и замыкания.",
+              code: `const Maybe = value => ({
+  bind: fn => (value === null || value === undefined ? Maybe(null) : Maybe(fn(value))),
+  get: () => value
+});
+const user = { name: "Alice" };
+const name = Maybe(user).bind(u => u.name).get();
+console.log(name); // Alice`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const createTask = (fn) => ({run: () => fn(), map: (f) => createTask(() => f(fn()))})</code> — объясни этот паттерн.",
+              code: `Этот паттерн реализует функциональный контейнер (functor) для отложенных вычислений.
+Пример:
+const task = createTask(() => 5);
+const doubled = task.map(x => x * 2);
+console.log(doubled.run()); // 10
+map позволяет трансформировать результат, не выполняя его сразу.`
+            },
+            {
+              d: "hard",
+              t: "Что произойдёт с <code>this</code> в стрелочной функции внутри <code>eval()</code>?",
+              code: `this в стрелочной функции внутри eval будет таким же, как и снаружи eval, так как eval не создаёт новой области видимости для this.
+const fn = () => this;
+eval("fn()"); // this будет таким же, как и в окружающем коде`
+            },
+            {
+              d: "hard",
+              t: "Реализуй реактивную переменную <code>createSignal</code> (как в Solid.js) через стрелочные функции и замыкания.",
+              code: `const createSignal = value => {
+  const subscribers = new Set();
+  return [
+    () => value,
+    newValue => {
+      value = newValue;
+      subscribers.forEach(fn => fn(value));
+    },
+    fn => { subscribers.add(fn); return () => subscribers.delete(fn); }
+  ];
+};
+const [get, set, subscribe] = createSignal(0);
+subscribe(val => console.log(val));
+set(42); // 42`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const flow = (...fns) => async (...args) => ...</code> с обработкой ошибок на каждом шаге.",
+              code: `const flow = (...fns) => async (...args) => {
+  let result = await fns[0](...args);
+  for (let i = 1; i < fns.length; i++) {
+    try {
+      result = await fns[i](result);
+    } catch (err) {
+      console.error(\`Ошибка на шаге \${i}: \${err.message}\`);
+      throw err;
+    }
+  }
+  return result;
+};
+const add1 = async x => x + 1;
+const times2 = async x => { if (x > 10) throw new Error("Too big"); return x * 2; };
+flow(add1, times2)(5).then(console.log).catch(console.error); // 12`
+            },
+            {
+              d: "hard",
+              t: "Объясни как стрелочные функции работают с <code>Proxy</code> — какие ловушки можно перехватить?",
+              code: `Стрелочные функции можно обернуть в Proxy для перехвата вызовов, но нельзя перехватить this, так как он лексический.
+Пример:
+const fn = () => 42;
+const proxy = new Proxy(fn, {
+  apply(target, thisArg, args) {
+    console.log("Перехвачен вызов!");
+    return target(...args);
+  }
+});
+proxy(); // Перехвачен вызов! → 42`
+            },
+            {
+              d: "hard",
+              t: 'Реализуй паттерн "функциональное обновление состояния" используя только стрелочные функции (без мутаций).',
+              code: `const createState = initial => {
+  let state = initial;
+  return [
+    () => state,
+    updater => { state = updater(state); }
+  ];
+};
+const [getState, setState] = createState(0);
+setState(prev => prev + 1);
+console.log(getState()); // 1`
+            },
+            {
+              d: "hard",
+              t: "Напиши <code>const useReducer = (reducer, init) => {...}</code> — мини-хук через стрелочные функции и замыкания.",
+              code: `const useReducer = (reducer, init) => {
+  let state = init;
+  const dispatch = action => { state = reducer(state, action); };
+  return [() => state, dispatch];
+};
+const [getState, dispatch] = useReducer((s, a) => a.type === "INC" ? s + 1 : s, 0);
+dispatch({ type: "INC" });
+console.log(getState()); // 1`
+            }
+          ]
+        }
+      ];
+
+      const STORAGE_KEY = "jsSolutions_done";
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      let currentFilter = "all";
+      let searchQuery = "";
+      const TOTAL = 200;
+
+      function renderAll() {
+        const root = document.getElementById("tasksRoot");
+        root.innerHTML = "";
+        let easy = 0, med = 0, hard = 0;
+        TOPICS.forEach(t => t.tasks.forEach(tk => {
+          if (tk.d === "easy")   easy++;
+          if (tk.d === "medium") med++;
+          if (tk.d === "hard")   hard++;
+        }));
+        document.getElementById("easyCount").textContent = easy;
+        document.getElementById("medCount").textContent = med;
+        document.getElementById("hardCount").textContent = hard;
+        let num = 0;
+        TOPICS.forEach(topic => {
+          const sec = document.createElement("section");
+          sec.className = "topic-section";
+          const hdr = document.createElement("div");
+          hdr.className = "topic-header";
+          hdr.innerHTML = `
+            <div class="topic-icon" style="background:${topic.color}22;color:${topic.color}">${topic.icon}</div>
+            <span class="topic-title">${topic.title}</span>
+            <span class="topic-count">${topic.tasks.length} решений</span>
+          `;
+          sec.appendChild(hdr);
+          const grid = document.createElement("div");
+          grid.className = "task-grid";
+          topic.tasks.forEach((task, i) => {
+            num++;
+            const id = `${topic.id}_${i}`;
+            const card = document.createElement("div");
+            card.className = "task-card" + (done[id] ? " done" : "");
+            card.style.setProperty("--card-color", topic.color);
+            card.dataset.diff = task.d;
+            card.dataset.done = done[id] ? "1" : "0";
+            card.dataset.text = (task.t + " " + (task.code||"")).toLowerCase().replace(/<[^>]+>/g, "");
+            const diffLabel = { easy:"Лёгкое", medium:"Среднее", hard:"Сложное" }[task.d];
+            const diffClass = { easy:"diff-easy", medium:"diff-medium", hard:"diff-hard" }[task.d];
+            card.innerHTML = `
+              <div class="task-top">
+                <span class="task-num">#${String(num).padStart(3,"0")}</span>
+                <span class="difficulty ${diffClass}">${diffLabel}</span>
+              </div>
+              <div class="task-text">${task.t}</div>
+              <div class="code-block">${task.code || "—"}</div>
+              <div class="task-actions">
+                <button class="btn-done" onclick="toggleDone('${id}',this)">
+                  ${done[id] ? "✅ Изучено" : "○ Изучить"}
+                </button>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+          sec.appendChild(grid);
+          root.appendChild(sec);
+        });
+        updateProgress();
+        applyFilter();
+      }
+
+      function toggleDone(id, btn) {
+        done[id] = !done[id];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+        const card = btn.closest(".task-card");
+        card.classList.toggle("done", done[id]);
+        card.dataset.done = done[id] ? "1" : "0";
+        btn.innerHTML = done[id] ? "✅ Изучено" : "○ Изучить";
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const cnt = Object.values(done).filter(Boolean).length;
+        const pct = ((cnt / TOTAL) * 100).toFixed(1);
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("progressText").textContent = `${cnt} / ${TOTAL}`;
+        document.getElementById("floatCounter").textContent = `✅ ${cnt} / ${TOTAL}`;
+      }
+
+      function setFilter(f, btn) {
+        currentFilter = f;
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyFilter();
+      }
+
+      function filterTasks() {
+        searchQuery = document.getElementById("searchInput").value.toLowerCase();
+        applyFilter();
+      }
+
+      function applyFilter() {
+        document.querySelectorAll(".task-card").forEach(card => {
+          let show = true;
+          if (currentFilter === "easy")   show = card.dataset.diff === "easy";
+          if (currentFilter === "medium") show = card.dataset.diff === "medium";
+          if (currentFilter === "hard")   show = card.dataset.diff === "hard";
+          if (currentFilter === "done")   show = card.dataset.done === "1";
+          if (currentFilter === "undone") show = card.dataset.done === "0";
+          if (searchQuery && !card.dataset.text.includes(searchQuery)) show = false;
+          card.classList.toggle("hidden", !show);
+        });
+        document.querySelectorAll(".topic-section").forEach(sec => {
+          const visible = [...sec.querySelectorAll(".task-card")].some(c => !c.classList.contains("hidden"));
+          sec.classList.toggle("hidden", !visible);
+        });
+      }
+
+      function resetAll() {
+        if (confirm("Сбросить весь прогресс?")) {
+          done = {};
+          localStorage.removeItem(STORAGE_KEY);
+          renderAll();
+        }
+      }
+
+      renderAll();
+    </script>
+  </body>
+</html>
