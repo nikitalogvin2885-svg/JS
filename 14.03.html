@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Ответы — Объекты</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap");
+      :root {
+        --bg: #0a0a0f;
+        --surface: #13131a;
+        --card: #1a1a25;
+        --border: #2a2a3d;
+        --accent: #06b6d4;
+        --accent2: #818cf8;
+        --accent3: #f59e0b;
+        --accent4: #10b981;
+        --accent5: #ef4444;
+        --accent6: #f472b6;
+        --text: #e2e8f0;
+        --muted: #64748b;
+      }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background:
+          radial-gradient(ellipse at 15% 25%, rgba(6,182,212,0.08) 0%, transparent 45%),
+          radial-gradient(ellipse at 85% 70%, rgba(129,140,248,0.07) 0%, transparent 45%),
+          radial-gradient(ellipse at 50% 10%, rgba(244,114,182,0.04) 0%, transparent 40%);
+        animation: bgPulse 22s ease-in-out infinite alternate;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes bgPulse {
+        0% { transform: translate(0,0) scale(1); }
+        100% { transform: translate(1%,2%) scale(1.02); }
+      }
+      .container { max-width:1200px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
+      header { padding:64px 20px 44px; text-align:center; position:relative; z-index:1; }
+      .badge {
+        display:inline-flex; align-items:center; gap:8px;
+        background:linear-gradient(135deg,#06b6d4,#818cf8); color:#fff;
+        font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase;
+        padding:7px 18px; border-radius:20px; margin-bottom:22px;
+      }
+      h1 {
+        font-size:clamp(2.4rem,6vw,4.8rem); font-weight:900; line-height:1.08;
+        background:linear-gradient(135deg,#fff 0%,#06b6d4 45%,#818cf8 100%);
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        margin-bottom:14px;
+      }
+      .subtitle { color:var(--muted); font-size:1.05rem; margin-bottom:44px; line-height:1.6; }
+      .stats { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-bottom:48px; }
+      .stat-chip {
+        background:var(--card); border:1px solid var(--border); border-radius:12px;
+        padding:11px 18px; display:flex; align-items:center; gap:9px; font-size:0.88rem;
+      }
+      .stat-chip .num { font-size:1.35rem; font-weight:700; color:var(--accent); }
+      .progress-wrap {
+        background:var(--card); border:1px solid var(--border); border-radius:16px;
+        padding:18px 24px; margin-bottom:36px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+      }
+      .progress-label { font-weight:600; font-size:0.93rem; white-space:nowrap; }
+      .progress-bar-outer { flex:1; min-width:180px; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+      .progress-bar-inner { height:100%; background:linear-gradient(90deg,#06b6d4,#818cf8); border-radius:4px; transition:width 0.4s ease; }
+      .progress-count { font-family:"JetBrains Mono",monospace; font-size:0.88rem; color:var(--accent); white-space:nowrap; }
+      .btn-reset {
+        background:transparent; border:1px solid var(--border); border-radius:10px;
+        padding:9px 15px; color:var(--muted); cursor:pointer; font-family:"Inter",sans-serif;
+        font-size:0.82rem; font-weight:600; transition:all 0.2s;
+      }
+      .btn-reset:hover { border-color:var(--accent5); color:var(--accent5); }
+      .controls { display:flex; gap:10px; margin-bottom:44px; flex-wrap:wrap; align-items:center; }
+      .search-wrap { flex:1; min-width:240px; position:relative; }
+      .search-wrap input {
+        width:100%; background:var(--card); border:1px solid var(--border); border-radius:12px;
+        padding:11px 16px 11px 42px; color:var(--text); font-family:"Inter",sans-serif; font-size:0.93rem;
+        outline:none; transition:border-color 0.2s;
+      }
+      .search-wrap input:focus { border-color:var(--accent); }
+      .search-wrap::before { content:"🔍"; position:absolute; left:13px; top:50%; transform:translateY(-50%); }
+      .filter-btn {
+        background:var(--card); border:1px solid var(--border); border-radius:10px;
+        padding:9px 15px; color:var(--muted); cursor:pointer; font-family:"Inter",sans-serif;
+        font-size:0.82rem; font-weight:600; transition:all 0.2s; white-space:nowrap;
+      }
+      .filter-btn:hover, .filter-btn.active { border-color:var(--accent); color:#fff; background:rgba(6,182,212,0.15); }
+      .topic-section { margin-bottom:64px; }
+      .topic-header {
+        display:flex; align-items:center; gap:14px; margin-bottom:22px; padding:16px 0;
+        border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:10;
+      }
+      .topic-icon {
+        width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+        font-size:1.5rem; flex-shrink:0;
+      }
+      .topic-title { font-size:1.35rem; font-weight:700; }
+      .topic-count {
+        margin-left:auto; font-family:"JetBrains Mono",monospace; font-size:0.78rem;
+        color:var(--muted); background:var(--surface); padding:4px 11px;
+        border-radius:20px; border:1px solid var(--border);
+      }
+      .task-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
+      .task-card {
+        background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px;
+        transition:all 0.22s; position:relative; overflow:hidden;
+      }
+      .task-card::before {
+        content:""; position:absolute; top:0; left:0; right:0; height:2px;
+        background:linear-gradient(90deg,var(--card-color,#06b6d4),transparent); opacity:0; transition:opacity 0.22s;
+      }
+      .task-card:hover {
+        transform:translateY(-3px); box-shadow:0 10px 36px rgba(0,0,0,0.32); border-color:var(--card-color,#06b6d4);
+      }
+      .task-card:hover::before { opacity:1; }
+      .task-card.done { background:rgba(16,185,129,0.06); border-color:rgba(16,185,129,0.28); }
+      .task-card.done::before { opacity:1; background:linear-gradient(90deg,#10b981,transparent); }
+      .task-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:13px; }
+      .task-num { font-family:"JetBrains Mono",monospace; font-size:0.73rem; color:var(--muted); background:var(--surface); padding:3px 8px; border-radius:6px; }
+      .difficulty { font-size:0.68rem; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+      .diff-easy { background:rgba(16,185,129,0.13); color:#10b981; }
+      .diff-medium { background:rgba(245,158,11,0.13); color:#f59e0b; }
+      .diff-hard { background:rgba(239,68,68,0.13); color:#ef4444; }
+      .task-text { font-size:0.92rem; line-height:1.68; color:var(--text); margin-bottom:14px; }
+      .task-text code { font-family:"JetBrains Mono",monospace; background:var(--surface); color:#06b6d4; padding:2px 6px; border-radius:4px; font-size:0.84em; }
+      .code-block {
+        font-family:"JetBrains Mono",monospace; font-size:0.77rem; background:var(--surface);
+        border:1px solid var(--border); border-radius:10px; padding:12px 14px; color:#94a3b8;
+        margin-bottom:14px; white-space:pre; overflow-x:auto; line-height:1.65;
+      }
+      .task-actions { display:flex; gap:8px; margin-top:6px; }
+      .btn-done {
+        background:transparent; border:1px solid var(--border); border-radius:8px;
+        padding:7px 15px; color:var(--muted); cursor:pointer; font-family:"Inter",sans-serif;
+        font-size:0.79rem; font-weight:600; transition:all 0.2s;
+      }
+      .btn-done:hover { border-color:#10b981; color:#10b981; }
+      .task-card.done .btn-done { background:rgba(16,185,129,0.1); border-color:#10b981; color:#10b981; }
+      .float-counter {
+        position:fixed; bottom:28px; right:28px;
+        background:linear-gradient(135deg,#06b6d4,#818cf8); border-radius:20px;
+        padding:13px 22px; font-weight:700; font-size:0.95rem; color:#fff;
+        box-shadow:0 8px 32px rgba(6,182,212,0.4); z-index:100; transition:transform 0.2s;
+      }
+      .float-counter:hover { transform:scale(1.06); }
+      .hidden { display:none !important; }
+      ::-webkit-scrollbar { width:5px; }
+      ::-webkit-scrollbar-track { background:var(--bg); }
+      ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+      ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+      @media (max-width:640px) {
+        .task-grid { grid-template-columns:1fr; }
+        h1 { font-size:2.3rem; }
+        .float-counter { bottom:14px; right:14px; padding:10px 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="badge">✦ Готовые ответы</div>
+      <h1>200 ответов<br />Объекты</h1>
+      <p class="subtitle">Основы · Копирование · Сборка мусора · this · new · ?. · Symbol · Преобразования</p>
+      <div class="stats">
+        <div class="stat-chip"><span class="num">200</span>&nbsp;ответов</div>
+        <div class="stat-chip"><span class="num">9</span>&nbsp;тем</div>
+        <div class="stat-chip"><span class="num" id="easyCount">0</span>&nbsp;лёгких</div>
+        <div class="stat-chip"><span class="num" id="medCount">0</span>&nbsp;средних</div>
+        <div class="stat-chip"><span class="num" id="hardCount">0</span>&nbsp;сложных</div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="progress-wrap">
+        <span class="progress-label">⚡ Прогресс изучения</span>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+        </div>
+        <span class="progress-count" id="progressText">0 / 200</span>
+        <button class="btn-reset" onclick="resetAll()">Сбросить</button>
+      </div>
+
+      <div class="controls">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Поиск ответа..." oninput="filterTasks()" />
+        </div>
+        <button class="filter-btn active" onclick="setFilter('all', this)">Все</button>
+        <button class="filter-btn" onclick="setFilter('easy', this)">Лёгкие</button>
+        <button class="filter-btn" onclick="setFilter('medium', this)">Средние</button>
+        <button class="filter-btn" onclick="setFilter('hard', this)">Сложные</button>
+        <button class="filter-btn" onclick="setFilter('done', this)">Прочитано</button>
+        <button class="filter-btn" onclick="setFilter('undone', this)">Не прочитано</button>
+      </div>
+
+      <div id="tasksRoot"></div>
+    </div>
+
+    <div class="float-counter" id="floatCounter">📖 0 / 200</div>
+
+    <script>
+      const TOPICS = [
+        {
+          id: "obj_basics",
+          title: "Объекты: основы",
+          icon: "📦",
+          color: "#06b6d4",
+          tasks: [
+            { d:"easy", t:"Создаём объект:", code:`const user = { name:"Алекс", age:28, isAdmin:true };\nconsole.log(user.name, user.age, user.isAdmin);` },
+            { d:"easy", t:"Точка — только валидный идентификатор, [] — любое выражение.", code:`user.name\nuser["first name"]\nuser[someVar]` },
+            { d:"easy", t:"Добавление свойства:", code:`user.email = "alex@example.com";\n// или\nuser["phone"] = "+7...";` },
+            { d:"easy", t:"Удаление:", code:`delete user.age;\nconsole.log(user.age); // undefined` },
+            { d:"easy", t:"Два способа проверки:", code:`console.log("age" in user);\nconsole.log(user.hasOwnProperty("age"));` },
+            { d:"easy", t:"Оператор in:", code:`if ("name" in user) { … }` },
+            { d:"easy", t:"Перебор ключей:", code:`for (let key in user) {\n  console.log(key, user[key]);\n}` },
+            { d:"easy", t:"Вычисляемые свойства:", code:`const field = "score";\nconst obj = { [field]: 95 };` },
+            { d:"easy", t:"Shorthand-свойства:", code:`const name = "Оля"; const age = 30;\nconst person = { name, age };` },
+            { d:"easy", t:"Ключи, значения, пары:", code:`Object.keys(user);\nObject.values(user);\nObject.entries(user);` },
+            { d:"easy", t:"Создание из пар:", code:`Object.fromEntries([["a",1], ["b",2]]); // {a:1, b:2}` },
+            { d:"easy", t:"Вложенный объект:", code:`const user = { info: { city:"Москва" } };\nconsole.log(user.info.city);` },
+            { d:"easy", t:"Деструктуризация:", code:`const { name, age } = user;\nconsole.log(name, age);` },
+            { d:"easy", t:"Значение по умолчанию:", code:`const { city = "Не указан" } = user.info || {};` },
+            { d:"easy", t:"Spread для объединения:", code:`const defaults = { theme:"dark" };\nconst settings = { ...defaults, fontSize:16 };` },
+            { d:"medium", t:"Object.keys/values/entries:", code:`Object.keys(obj);\nObject.values(obj);\nObject.entries(obj).forEach(([k,v])=>…);` },
+            { d:"medium", t:"Object.fromEntries:", code:`Object.fromEntries([["a",1],["b",2]]); // {a:1,b:2}` },
+            { d:"medium", t:"Object.freeze:", code:`const frozen = Object.freeze({a:1});\nfrozen.a = 2; // молча игнорируется (в strict — ошибка)` },
+            { d:"medium", t:"Object.seal vs freeze:", code:`seal — нельзя добавлять/удалять свойства, но можно менять значения\nfreeze — ещё и значения нельзя менять` },
+            { d:"medium", t:"pick:", code:`function pick(obj, keys) {\n  return keys.reduce((res,k)=>(res[k]=obj[k],res),{});\n}` },
+            { d:"medium", t:"omit:", code:`function omit(obj, keys) {\n  const res = {...obj};\n  keys.forEach(k=>delete res[k]);\n  return res;\n}` },
+            { d:"medium", t:"Object.defineProperty:", code:`Object.defineProperty(obj, "id", { writable:false });\nobj.id = 999; // не изменится` },
+            { d:"hard", t:"Дескрипторы свойств:", code:`Object.getOwnPropertyDescriptor(obj, "prop");\n// {value, writable, enumerable, configurable}` },
+            { d:"hard", t:"Глубокая заморозка:", code:`function deepFreeze(obj) {\n  Object.freeze(obj);\n  Object.values(obj).forEach(v=>typeof v==="object"&&deepFreeze(v));\n  return obj;\n}` },
+            { d:"hard", t:"Геттер/сеттер:", code:`const rect = {\n  width:10, height:20,\n  get area() { return this.width*this.height; }\n};\nconsole.log(rect.area); // 200` }
+          ]
+        },
+        {
+          id: "obj_copy",
+          title: "Копирование объектов и ссылки",
+          icon: "📋",
+          color: "#818cf8",
+          tasks: [
+            { d:"easy", t:"Объекты хранятся по ссылке — присваивание копирует ссылку." },
+            { d:"easy", t:"Изменение через одну переменную видно в другой:", code:`let a = {x:1}; let b = a;\nb.x = 99;\nconsole.log(a.x); // 99` },
+            { d:"easy", t:"Поверхностная копия:", code:`const copy = Object.assign({}, original);` },
+            { d:"easy", t:"Spread-копия:", code:`const copy = { ...original };` },
+            { d:"easy", t:"Поверхностное vs глубокое:", code:`let deep = { nested:{a:1} };\nlet shallow = {...deep};\nshallow.nested.a = 99; // меняет и original` },
+            { d:"easy", t:"Сравнение объектов:", code:`=== — сравнивает ссылки\nJSON.stringify(a) === JSON.stringify(b) — поверхностно по значению` },
+            { d:"medium", t:"shallowEqual:", code:`function shallowEqual(a,b) {\n  const ka=Object.keys(a);\n  return ka.length===Object.keys(b).length && ka.every(k=>a[k]===b[k]);\n}` },
+            { d:"medium", t:"JSON-копия:", code:`JSON.parse(JSON.stringify(obj));\nОграничения: нет функций, Symbol, циклических ссылок, Date→строка` },
+            { d:"medium", t:"structuredClone:", code:`structuredClone(obj);\nПоддерживает Date, RegExp, Map/Set, циклические ссылки (Chrome 98+ / Node 17+)` },
+            { d:"medium", t:"Рекурсивный deepClone:", code:`function deepClone(obj) {\n  if (!obj || typeof obj !== "object") return obj;\n  const clone = Array.isArray(obj)?[]:{};\n  for (let k in obj) clone[k] = deepClone(obj[k]);\n  return clone;\n}` },
+            { d:"medium", t:"Циклические ссылки:", code:`structuredClone сохраняет структуру цикла (новая копия с теми же ссылками)` },
+            { d:"hard", t:"deepEqual:", code:`function deepEqual(a,b) {\n  if (a===b) return true;\n  if (!a || typeof a!=="object" || !b || typeof b!=="object") return false;\n  const ka=Object.keys(a);\n  if (ka.length !== Object.keys(b).length) return false;\n  return ka.every(k=>deepEqual(a[k],b[k]));\n}` },
+            { d:"hard", t:"deepMerge:", code:`function deepMerge(t,s) {\n  const o = {...t};\n  for (let k in s) {\n    if (s[k] && typeof s[k]==="object" && !Array.isArray(s[k]))\n      o[k] = deepMerge(o[k]||{}, s[k]);\n    else o[k] = s[k];\n  }\n  return o;\n}` },
+            { d:"hard", t:"Копирование особых случаев:", code:`Функции — по ссылке, Symbol — только через getOwnPropertySymbols, прототип не копируется` },
+            { d:"hard", t:"immutableSet:", code:`function immutableSet(obj, path, val) {\n  const p = path.split(".");\n  if (p.length===1) return {...obj, [p[0]]:val};\n  const k = p[0];\n  return {...obj, [k]:immutableSet(obj[k]||{}, p.slice(1).join("."), val)};\n}` }
+          ]
+        },
+        {
+          id: "gc",
+          title: "Сборка мусора",
+          icon: "🗑️",
+          color: "#f472b6",
+          tasks: [
+            { d:"easy", t:"Сборка мусора — автоматическое освобождение памяти от объектов, на которые больше нет ссылок." },
+            { d:"easy", t:"Достижимость: объект достижим, если на него есть ссылка из корней или из другого достижимого объекта." },
+            { d:"easy", t:"Mark-and-sweep: 1) помечает все достижимые объекты от корней 2) удаляет непомеченные." },
+            { d:"easy", t:"Корни: глобальные переменные, стек вызовов, переменные в замыканиях, DOM-узлы с обработчиками и т.д." },
+            { d:"medium", t:"Утечка памяти — объект остаётся в памяти, хотя больше не нужен.", code:`let data = [];\nsetInterval(() => data.push(new Array(1000000).fill(0)), 1000); // растёт бесконечно` },
+            { d:"medium", t:"Замыкания и утечки:", code:`function outer() {\n  let big = new Array(1000000);\n  return () => big.length;\n}\nlet leak = outer(); // big не освободится, пока leak жив` },
+            { d:"medium", t:"WeakRef — слабая ссылка, не препятствует сборке мусора.", code:`const ref = new WeakRef({data:"big"});\n// позже: ref.deref() → объект или undefined` },
+            { d:"medium", t:"FinalizationRegistry — callback при сборке мусора.", code:`const registry = new FinalizationRegistry(held => console.log("удалён", held));\nregistry.register(obj, "мой объект");` },
+            { d:"hard", t:"Глобальные переменные живут до конца работы страницы → утечки при частом создании." },
+            { d:"hard", t:"DOM-утечки: удалённый элемент с обработчиком события, который ссылается на JS-объект." }
+          ]
+        },
+        {
+          id: "this",
+          title: 'Методы объекта, "this"',
+          icon: "🎯",
+          color: "#f59e0b",
+          tasks: [
+            { d:"easy", t:"Метод с this:", code:`const user = { name:"Аня", sayHi() { console.log("Привет, я " + this.name); } };\nuser.sayHi();` },
+            { d:"easy", t:"this в методе объекта — сам объект." },
+            { d:"easy", t:"Shorthand-метод:", code:`const obj = { greet() { … } }; // вместо greet: function(){…}` },
+            { d:"easy", t:"this в обычной функции без объекта: window/global (non-strict) / undefined (strict)." },
+            { d:"easy", t:"Потеря контекста:", code:`setTimeout(user.sayHi, 1000); // this → undefined / window` },
+            { d:"easy", t:"Исправление через bind:", code:`setTimeout(user.sayHi.bind(user), 1000);` },
+            { d:"easy", t:"Стрелочная функция сохраняет this:", code:`sayHi: () => console.log(this.name)` },
+            { d:"medium", t:"call:", code:`fn.call(context, arg1, arg2);` },
+            { d:"medium", t:"apply:", code:`fn.apply(context, [arg1, arg2]);` },
+            { d:"medium", t:"bind:", code:`const bound = fn.bind(context); bound(); // this = context` },
+            { d:"medium", t:"bind дважды:", code:`Второй bind перезапишет контекст только если не был жёстко привязан ранее.` },
+            { d:"medium", t:"Method chaining:", code:`const calc = { val:0, add(x){this.val+=x; return this;}, get(){return this.val} };\ncalc.add(5).add(3).get(); // 8` },
+            { d:"medium", t:"toString:", code:`const user = { name:"Катя", toString(){return "Пользователь " + this.name;} };\nconsole.log(""+user);` },
+            { d:"hard", t:"Soft binding — позволяет менять this, но сохраняет исходный, если не указан.", code:`function softBind(fn, ctx) { return function(...args) { return fn.apply(this===globalThis ? ctx : this, args); }; }` },
+            { d:"hard", t:"Приоритет this: 1) явный bind/call/apply 2) new 3) неявный (obj.method) 4) обычный вызов." },
+            { d:"hard", t:"Полифил bind:", code:`Function.prototype.myBind = function(ctx, ...boundArgs) {\n  const fn = this;\n  return function(...args) { return fn.apply(ctx, [...boundArgs, ...args]); };\n};` },
+            { d:"hard", t:"this при деструктуризации:", code:`const { sayHi } = user; sayHi(); // this потерян → undefined` },
+            { d:"hard", t:"setTimeout теряет контекст — исправить: bind, стрелка, обёртка.", code:`setTimeout(() => user.sayHi(), 1000);\nsetTimeout(user.sayHi.bind(user), 1000);\nsetTimeout(function(){user.sayHi()}, 1000);` }
+          ]
+        },
+        {
+          id: "constructor",
+          title: 'Конструктор, оператор "new"',
+          icon: "🏗️",
+          color: "#10b981",
+          tasks: [
+            { d:"easy", t:"Конструктор:", code:`function User(name, age) { this.name = name; this.age = age; }\nconst u = new User("Иван", 25);` },
+            { d:"easy", t:"Что делает new: 1) новый пустой объект 2) this = этот объект 3) prototype → Object 4) возврат this (если не указано иное)" },
+            { d:"easy", t:"С большой буквы — соглашение, что функция предназначена для вызова с new." },
+            { d:"easy", t:"new User возвращает новый объект с полями name и age." },
+            { d:"easy", t:"new.target:", code:`function User() { if (!new.target) throw new Error("Use new"); }` },
+            { d:"easy", t:"Возврат объекта из конструктора → возвращается он, а не this. Возврат примитива → игнорируется." },
+            { d:"medium", t:"Counter:", code:`function Counter() { let v=0; this.increment=()=>v++; this.decrement=()=>v--; this.value=()=>v; }` },
+            { d:"medium", t:"Прототип:", code:`User.prototype.sayHi = function(){console.log("Hi "+this.name);};` },
+            { d:"medium", t:"this.method vs prototype.method:", code:`this.method — своя копия у каждого экземпляра\nprototype.method — одна на всех, экономит память` },
+            { d:"medium", t:"instanceof:", code:`u instanceof User // true` },
+            { d:"medium", t:"Stack:", code:`function Stack() { this.items = []; }\nStack.prototype.push = function(v){this.items.push(v)};\nStack.prototype.pop = function(){return this.items.pop()};` },
+            { d:"medium", t:"constructor:", code:`Создаётся автоматически при создании через new, указывает на функцию-конструктор` },
+            { d:"hard", t:"myNew:", code:`function myNew(Ctor, ...args) {\n  const obj = Object.create(Ctor.prototype);\n  const res = Ctor.apply(obj, args);\n  return res && typeof res === "object" ? res : obj;\n}` },
+            { d:"hard", t:"Абстрактная фабрика:", code:`function createUserFactory(role) { return function(name) { return new User(name, role); }; }` },
+            { d:"hard", t:"LinkedList:", code:`function LinkedList() { this.head = null; }\nLinkedList.prototype.append = function(v) { … };\n// и т.д.` }
+          ]
+        },
+        {
+          id: "optional_chain",
+          title: "Опциональная цепочка '?.'",
+          icon: "🔗",
+          color: "#34d399",
+          tasks: [
+            { d:"easy", t:"?. — безопасный доступ к свойствам/методам/элементам, возвращает undefined вместо ошибки." },
+            { d:"easy", t:"?. лучше цепочки &&:", code:`user?.address?.city // undefined, если где-то null/undefined` },
+            { d:"easy", t:"null?.prop → undefined, undefined?.method() → undefined" },
+            { d:"easy", t:"Вызов метода:", code:`user?.greet?.(); // не упадёт, если greet нет` },
+            { d:"easy", t:"Доступ к массиву:", code:`arr?.[0]?.name` },
+            { d:"easy", t:"Слева от присваивания — SyntaxError" },
+            { d:"medium", t:"С ??:", code:`user?.address?.city ?? "Не указан"` },
+            { d:"medium", t:"Короткое замыкание:", code:`Если любое звено null/undefined → вся цепочка возвращает undefined` },
+            { d:"medium", t:"getDeep:", code:`function getDeep(obj, path) {\n  return path.split(".").reduce((o,k)=>o?.[k], obj);\n}` },
+            { d:"medium", t:"Скрытие багов:", code:`user?.profile?.stats?.score — может молча вернуть undefined вместо ошибки` },
+            { d:"hard", t:"Полифил ?.:", code:`function optChain(obj, ...keys) { return keys.reduce((o,k)=>o?.[k], obj); }` },
+            { d:"hard", t:"?. с Proxy:", code:`Проксирует get, has, getPrototypeOf и т.д. — зависит от цепочки` }
+          ]
+        },
+        {
+          id: "symbol",
+          title: "Тип данных Symbol",
+          icon: "🔮",
+          color: "#c084fc",
+          tasks: [
+            { d:"easy", t:"Symbol — уникальный примитивный тип.", code:`const sym = Symbol("описание");` },
+            { d:"easy", t:"Каждый Symbol уникален:", code:`Symbol("id") === Symbol("id") // false` },
+            { d:"easy", t:"Описание:", code:`sym.description // "описание"` },
+            { d:"easy", t:"Глобальный реестр:", code:`Symbol.for("shared") // один и тот же при повторном вызове` },
+            { d:"easy", t:"for vs обычный:", code:`Symbol.for("id") — глобально уникальный, Symbol("id") — локально уникальный` },
+            { d:"easy", t:"Symbol как ключ:", code:`const id = Symbol("id");\nobj[id] = 123;` },
+            { d:"easy", t:"Symbol не видны в for…in и Object.keys()" },
+            { d:"medium", t:"Получить Symbol-ключи:", code:`Object.getOwnPropertySymbols(obj)` },
+            { d:"medium", t:"Well-known Symbols:", code:`Symbol.iterator, Symbol.toStringTag, Symbol.toPrimitive, Symbol.hasInstance, Symbol.species` },
+            { d:"medium", t:"Symbol.iterator:", code:`const obj = { data:[1,2,3], [Symbol.iterator](){ let i=0; return { next:()=>i<this.data.length ? {value:this.data[i++],done:false} : {done:true} } }; }` },
+            { d:"medium", t:"Symbol.toPrimitive:", code:`{ [Symbol.toPrimitive](hint) { return hint==="number" ? 42 : "объект"; } }` },
+            { d:"medium", t:"Symbol.hasInstance:", code:`class MyArray { static [Symbol.hasInstance](v) { return Array.isArray(v); } }` },
+            { d:"hard", t:"Symbol.species:", code:`Array[Symbol.species] = MyArray; // map/filter вернут MyArray` },
+            { d:"hard", t:"Приватные поля через Symbol:", code:`const _secret = Symbol("secret");\nthis[_secret] = "hidden";` },
+            { d:"hard", t:"Symbol.asyncIterator:", code:`{ async *[Symbol.asyncIterator]() { yield await fetch(…); } }` }
+          ]
+        },
+        {
+          id: "obj_primitive",
+          title: "Преобразование объектов в примитивы",
+          icon: "⚗️",
+          color: "#fb923c",
+          tasks: [
+            { d:"easy", t:"ToPrimitive вызывается при +, ==, String(), Number() и т.д." },
+            { d:"easy", t:"Hint: 'number', 'string', 'default'" },
+            { d:"easy", t:"toString() вызывается, если valueOf вернул объект." },
+            { d:"easy", t:"valueOf() вызывается первым при числовом преобразовании." },
+            { d:"easy", t:"String({}) → \"[object Object]\"" },
+            { d:"medium", t:"Symbol.toPrimitive:", code:`{ [Symbol.toPrimitive](hint) { return hint==="number"?42:"объект"; } }` },
+            { d:"medium", t:"Приоритет: 1) Symbol.toPrimitive 2) valueOf 3) toString" },
+            { d:"medium", t:"obj + \"\": сначала valueOf → toString → \"[object Object]\"" },
+            { d:"medium", t:"money:", code:`const money = { amount:100, currency:"RUB", valueOf(){return this.amount}, toString(){return this.amount+" "+this.currency} };` },
+            { d:"hard", t:"Abstract Type Conversion — часть спецификации ECMA, включает ToPrimitive, ToNumber и др." }
+          ]
+        },
+        {
+          id: "obj_advanced",
+          title: "Объекты: продвинутые темы",
+          icon: "🚀",
+          color: "#38bdf8",
+          tasks: [
+            { d:"easy", t:"Object.create:", code:`const proto = { greet(){console.log("hi")}};\nconst obj = Object.create(proto);` },
+            { d:"easy", t:"Прототипная цепочка — поиск свойства идёт вверх по __proto__ до null." },
+            { d:"easy", t:"Object.getPrototypeOf(obj) → возвращает [[Prototype]]" },
+            { d:"easy", t:"hasOwnProperty — проверяет, собственное ли свойство (не из прототипа)." },
+            { d:"easy", t:"Перебор собственных свойств:", code:`for (let k in obj) if (obj.hasOwnProperty(k)) …` },
+            { d:"medium", t:"Proxy:", code:`const p = new Proxy({}, { get(t,k){console.log("get",k); return t[k];} });` },
+            { d:"medium", t:"get-ловушка:", code:`new Proxy({}, { get(t,k) { return k in t ? t[k] : 0; } })` },
+            { d:"medium", t:"set-ловушка:", code:`new Proxy({}, { set(t,k,v) { if (v<0) throw new Error(); t[k]=v; } })` },
+            { d:"medium", t:"Reflect — стандартные реализации ловушек.", code:`Reflect.get(obj, prop, receiver)` },
+            { d:"medium", t:"has-ловушка:", code:`new Proxy(obj, { has(t,k){ return k.startsWith("_") ? false : k in t; } })` },
+            { d:"medium", t:"Отрицательные индексы:", code:`new Proxy(arr, { get(t,k) { return k<0 ? t[t.length + +k] : t[k]; } })` },
+            { d:"medium", t:"getOwnPropertyDescriptors:", code:`Object.getOwnPropertyDescriptors(obj)` },
+            { d:"hard", t:"Реактивный Proxy:", code:`function reactive(obj, cb) { return new Proxy(obj, { set(t,k,v){ t[k]=v; cb(k,v); return true; } }); }` },
+            { d:"hard", t:"Revocable Proxy:", code:`const { proxy, revoke } = Proxy.revocable(target, handler); // revoke() отключает proxy` },
+            { d:"hard", t:"Виртуальный объект:", code:`new Proxy({}, { get(t,k){ return ()=>console.log("called",k); } })` },
+            { d:"hard", t:"Observer через Proxy:", code:`function observe(obj, cb) { return new Proxy(obj, { set(t,k,v){ t[k]=v; cb(k,v); return true; } }); }` },
+            { d:"hard", t:"Ленивая инициализация:", code:`Object.defineProperty(obj, "expensive", { get(){ console.log("вычисляю…"); return this._expensive = heavyCalc(); }, configurable:true });` },
+            { d:"hard", t:"Мемоизирующий Proxy:", code:`new Proxy(obj, { get(t,k){ if (typeof t[k]==="function") return memoize(t[k]); return t[k]; } })` },
+            { d:"hard", t:"Глубокий observable:", code:`function deepObservable(obj, cb) { return new Proxy(obj, { set(t,k,v){ t[k]=deepObservable(v,cb); cb(k,v); return true; } }); }` },
+            { d:"hard", t:"Immutable Proxy:", code:`new Proxy(obj, { set(){throw new Error("immutable")}, deleteProperty(){throw new Error("immutable")} })` }
+          ]
+        }
+      ];
+
+      const STORAGE_KEY = "jsObjectsAnswers_done";
+      let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      let currentFilter = "all";
+      let searchQuery = "";
+      const TOTAL = TOPICS.reduce((sum, t) => sum + t.tasks.length, 0);
+
+      function renderAll() {
+        const root = document.getElementById("tasksRoot");
+        root.innerHTML = "";
+        let easy = 0, med = 0, hard = 0;
+        TOPICS.forEach(t => t.tasks.forEach(tk => {
+          if (tk.d === "easy") easy++;
+          else if (tk.d === "medium") med++;
+          else hard++;
+        }));
+        document.getElementById("easyCount").textContent = easy;
+        document.getElementById("medCount").textContent = med;
+        document.getElementById("hardCount").textContent = hard;
+
+        let num = 0;
+        TOPICS.forEach(topic => {
+          const sec = document.createElement("section");
+          sec.className = "topic-section";
+          sec.innerHTML = `
+            <div class="topic-header">
+              <div class="topic-icon" style="background:${topic.color}1a;color:${topic.color}">${topic.icon}</div>
+              <span class="topic-title">${topic.title}</span>
+              <div class="topic-meta">
+                <span class="topic-count">${topic.tasks.length} ответов</span>
+              </div>
+            </div>
+            <div class="task-grid"></div>
+          `;
+          const grid = sec.querySelector(".task-grid");
+
+          topic.tasks.forEach((task, i) => {
+            num++;
+            const id = `${topic.id}_${i}`;
+            const isDone = !!done[id];
+            const card = document.createElement("div");
+            card.className = `task-card${isDone ? " done" : ""}`;
+            card.style.setProperty("--card-color", topic.color);
+            card.dataset.diff = task.d;
+            card.dataset.done = isDone ? "1" : "0";
+            card.dataset.text = (task.t + " " + (task.code || "")).replace(/<[^>]+>/g, "").toLowerCase();
+
+            const labels = { easy:"Лёгкое", medium:"Среднее", hard:"Сложное" };
+            const classes = { easy:"diff-easy", medium:"diff-medium", hard:"diff-hard" };
+
+            card.innerHTML = `
+              <div class="task-top">
+                <span class="task-num">#${String(num).padStart(3,"0")}</span>
+                <span class="difficulty ${classes[task.d]}">${labels[task.d]}</span>
+              </div>
+              <div class="task-text">${task.t}</div>
+              ${task.code ? `<div class="code-block">${task.code}</div>` : ""}
+              <div class="task-actions">
+                <button class="btn-done" onclick="toggleDone('${id}',this)">
+                  ${isDone ? "✅ Прочитано" : "○ Прочитано"}
+                </button>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          root.appendChild(sec);
+        });
+
+        updateProgress();
+        applyFilter();
+      }
+
+      function toggleDone(id, btn) {
+        done[id] = !done[id];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+        const card = btn.closest(".task-card");
+        card.classList.toggle("done", done[id]);
+        card.dataset.done = done[id] ? "1" : "0";
+        btn.innerHTML = done[id] ? "✅ Прочитано" : "○ Прочитано";
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const cnt = Object.values(done).filter(Boolean).length;
+        const pct = ((cnt / TOTAL) * 100).toFixed(1);
+        document.getElementById("progressBar").style.width = pct + "%";
+        document.getElementById("progressText").textContent = `${cnt} / ${TOTAL}`;
+        document.getElementById("floatCounter").textContent = `📖 ${cnt} / ${TOTAL}`;
+      }
+
+      function setFilter(f, btn) {
+        currentFilter = f;
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyFilter();
+      }
+
+      function filterTasks() {
+        searchQuery = document.getElementById("searchInput").value.toLowerCase();
+        applyFilter();
+      }
+
+      function applyFilter() {
+        document.querySelectorAll(".task-card").forEach(card => {
+          let show = true;
+          const d = card.dataset.diff;
+          const dn = card.dataset.done === "1";
+          if (currentFilter === "easy") show = d === "easy";
+          else if (currentFilter === "medium") show = d === "medium";
+          else if (currentFilter === "hard") show = d === "hard";
+          else if (currentFilter === "done") show = dn;
+          else if (currentFilter === "undone") show = !dn;
+          if (searchQuery && !card.dataset.text.includes(searchQuery)) show = false;
+          card.classList.toggle("hidden", !show);
+        });
+        document.querySelectorAll(".topic-section").forEach(sec => {
+          const vis = [...sec.querySelectorAll(".task-card")].some(c => !c.classList.contains("hidden"));
+          sec.classList.toggle("hidden", !vis);
+        });
+      }
+
+      function resetAll() {
+        if (confirm("Сбросить весь прогресс?")) {
+          done = {};
+          localStorage.removeItem(STORAGE_KEY);
+          renderAll();
+        }
+      }
+
+      renderAll();
+    </script>
+  </body>
+</html>
