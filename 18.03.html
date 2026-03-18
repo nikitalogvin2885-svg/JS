@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Solutions — Типы данных и структуры</title>
+
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap");
+
+        :root {
+            --bg: #0b1020;
+            --surface: #11172a;
+            --card: #161d34;
+            --border: #2a355a;
+            --text: #e5ecff;
+            --muted: #94a3c4;
+            --accent: #5eead4;
+            --accent2: #60a5fa;
+            --accent3: #f59e0b;
+            --accent4: #22c55e;
+            --accent5: #ef4444;
+            --accent6: #a78bfa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, sans-serif;
+            background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.12), transparent 30%), radial-gradient(circle at bottom right, rgba(94, 234, 212, 0.1), transparent 25%), var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        header {
+            padding: 64px 0 36px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            color: #061018;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 5rem);
+            line-height: 1.05;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            max-width: 760px;
+            margin: 0 auto 34px;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .stat-chip {
+            background: rgba(22, 29, 52, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 18px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+            .stat-chip .num {
+                color: var(--accent);
+                font-size: 1.35rem;
+                font-weight: 800;
+            }
+
+        .progress-wrap {
+            background: rgba(22, 29, 52, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 22px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .progress-label {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .progress-bar {
+            flex: 1;
+            min-width: 220px;
+            height: 10px;
+            background: #0e1425;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            transition: width 0.35s ease;
+        }
+
+        .progress-count {
+            font-family: "JetBrains Mono", monospace;
+            color: var(--accent);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+            .btn-reset:hover {
+                color: white;
+                border-color: var(--accent5);
+            }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(22, 29, 52, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-bottom: 22px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+            .search-wrap input {
+                width: 100%;
+                padding: 12px 14px 12px 42px;
+                border-radius: 12px;
+                background: #0e1425;
+                border: 1px solid var(--border);
+                color: var(--text);
+                outline: none;
+                font-size: 0.95rem;
+            }
+
+            .search-wrap::before {
+                content: "🔎";
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 0.95rem;
+            }
+
+        .filter-btn {
+            background: #0e1425;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+            .filter-btn:hover,
+            .filter-btn.active {
+                color: white;
+                border-color: var(--accent2);
+                background: rgba(96, 165, 250, 0.12);
+            }
+
+        .topic-section {
+            margin-top: 34px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(11, 16, 32, 0.92);
+            backdrop-filter: blur(12px);
+            z-index: 10;
+        }
+
+        .topic-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .topic-title {
+            font-size: 1.32rem;
+            font-weight: 800;
+        }
+
+        .topic-count {
+            margin-left: auto;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            background: #0e1425;
+            border-radius: 999px;
+            padding: 5px 11px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.8rem;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 14px;
+        }
+
+        .task-card {
+            background: rgba(22, 29, 52, 0.94);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .task-card::before {
+                content: "";
+                position: absolute;
+                inset: 0 0 auto 0;
+                height: 3px;
+                background: linear-gradient(90deg, var(--card-color, var(--accent2)), transparent);
+                opacity: 0;
+                transition: opacity 0.18s;
+            }
+
+            .task-card:hover {
+                transform: translateY(-3px);
+                border-color: var(--card-color, var(--accent2));
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+            }
+
+                .task-card:hover::before {
+                    opacity: 1;
+                }
+
+            .task-card.done {
+                border-color: rgba(34, 197, 94, 0.4);
+                background: rgba(34, 197, 94, 0.08);
+            }
+
+                .task-card.done::before {
+                    opacity: 1;
+                    background: linear-gradient(90deg, var(--accent4), transparent);
+                }
+
+        .task-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .task-num {
+            font-family: "JetBrains Mono", monospace;
+            color: var(--muted);
+            background: #0e1425;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 0.76rem;
+        }
+
+        .difficulty {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .diff-easy {
+            background: rgba(34, 197, 94, 0.14);
+            color: var(--accent4);
+        }
+
+        .diff-medium {
+            background: rgba(245, 158, 11, 0.14);
+            color: var(--accent3);
+        }
+
+        .diff-hard {
+            background: rgba(239, 68, 68, 0.14);
+            color: var(--accent5);
+        }
+
+        .task-text {
+            font-size: 0.94rem;
+            line-height: 1.65;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+            .task-text code {
+                font-family: "JetBrains Mono", monospace;
+                background: #0e1425;
+                border: 1px solid var(--border);
+                border-radius: 7px;
+                padding: 2px 6px;
+                color: var(--accent);
+                font-size: 0.85em;
+            }
+
+            .task-text pre {
+                background: #0e1425;
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 12px;
+                margin: 10px 0 0;
+                overflow-x: auto;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+                line-height: 1.5;
+                color: #a5b4fc;
+            }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-done {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 9px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.18s;
+        }
+
+            .btn-done:hover {
+                border-color: var(--accent4);
+                color: var(--accent4);
+            }
+
+        .task-card.done .btn-done {
+            color: var(--accent4);
+            border-color: var(--accent4);
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .float-counter {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            color: #041018;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-weight: 900;
+            box-shadow: 0 16px 40px rgba(96, 165, 250, 0.35);
+            z-index: 100;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 999px;
+        }
+
+        @media (max-width: 680px) {
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .float-counter {
+                right: 12px;
+                bottom: 12px;
+                padding: 10px 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="badge">✦ JavaScript Solutions</div>
+            <h1>200 решений<br />по структурам данных</h1>
+            <p class="subtitle">
+                Типы данных · примитивы · числа · строки · массивы · Map/Set · Date · JSON
+            </p>
+            <div class="stats">
+                <div class="stat-chip"><span class="num">200</span> решений</div>
+                <div class="stat-chip"><span class="num">13</span> тем</div>
+                <div class="stat-chip"><span class="num" id="easyCount">0</span> лёгких</div>
+                <div class="stat-chip"><span class="num" id="medCount">0</span> средних</div>
+                <div class="stat-chip"><span class="num" id="hardCount">0</span> сложных</div>
+            </div>
+        </header>
+
+        <div class="progress-wrap">
+            <span class="progress-label">⚡ Прогресс</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <span class="progress-count" id="progressText">0 / 200</span>
+            <button class="btn-reset" onclick="resetAll()">Сбросить</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-wrap">
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Поиск решения..."
+                       oninput="filterTasks()" />
+            </div>
+            <button class="filter-btn active" onclick="setFilter('all', this)">Все</button>
+            <button class="filter-btn" onclick="setFilter('easy', this)">Лёгкие</button>
+            <button class="filter-btn" onclick="setFilter('medium', this)">Средние</button>
+            <button class="filter-btn" onclick="setFilter('hard', this)">Сложные</button>
+            <button class="filter-btn" onclick="setFilter('done', this)">Выполненные</button>
+            <button class="filter-btn" onclick="setFilter('undone', this)">Невыполненные</button>
+        </div>
+
+        <div id="tasksRoot"></div>
+    </div>
+
+    <div class="float-counter" id="floatCounter">✅ 0 / 200</div>
+
+    <script>
+    const TOPICS = [
+      {
+        id: "types",
+        title: "Типы данных",
+        icon: "🧩",
+        color: "#60a5fa",
+        tasks: [
+          { d: "easy",   t: '<strong>Ответ:</strong> Примитивные типы: <code>string</code>, <code>number</code>, <code>bigint</code>, <code>boolean</code>, <code>undefined</code>, <code>symbol</code>, <code>null</code>.' },
+          { d: "easy",   t: '<strong>Ответ:</strong> Примитивы неизменяемы, передаются по значению, объекты — по ссылке, изменяемы.' },
+          { d: "easy",   t: '<strong>Ответ:</strong> <code>typeof 42</code> → <code>"number"</code>, <code>typeof "hi"</code> → <code>"string"</code>, <code>typeof true</code> → <code>"boolean"</code>.' },
+          { d: "easy",   t: '<strong>Ответ:</strong> <code>typeof undefined</code> → <code>"undefined"</code>, <code>typeof null</code> → <code>"object"</code> (историческая ошибка).' },
+          { d: "easy",   t: '<strong>Ответ:</strong> <code>typeof []</code> → <code>"object"</code>, <code>typeof {}</code> → <code>"object"</code>, <code>typeof Symbol("id")</code> → <code>"symbol"</code>, <code>typeof 10n</code> → <code>"bigint"</code>.' },
+          { d: "easy",   t: '<strong>Решение:</strong><br><pre><code>function getType(value) {\n  if (value === null) return "null";\n  return typeof value;\n}\n\nconsole.log(getType(null));     // "null"\nconsole.log(getType({}));       // "object"</code></pre>' },
+          { d: "easy",   t: '<strong>Ответ:</strong> <code>BigInt</code> — тип для целых чисел любой длины.<br><strong>Пример:</strong><br><pre><code>const big = 12345678901234567890n;\nconsole.log(big + 1n);</code></pre>' },
+          { d: "medium", t: '<strong>Решение:</strong><br><pre><code>function checkType(value) {\n  if (Array.isArray(value)) return "array";\n  if (value === null) return "null";\n  if (typeof value === "function") return "function";\n  if (value && typeof value === "object") return "object";\n  return "primitive";\n}</code></pre>' },
+          { d: "medium", t: '<strong>Ответ:</strong> <code>typeof</code> — общий тип, <code>instanceof</code> — проверка по прототипу.<br><pre><code>console.log(typeof []);          // "object"\nconsole.log([] instanceof Array); // true</code></pre>' },
+          { d: "medium", t: '<strong>Решение:</strong><br><pre><code>function getReadableType(v) {\n  if (v === null) return "null";\n  if (Array.isArray(v)) return "массив";\n  if (typeof v === "function") return "функция";\n  return typeof v;\n}</code></pre>' },
+          { d: "medium", t: '<strong>Ответ:</strong> falsy: <code>false, 0, "", null, undefined, NaN</code><br>truthy: всё остальное<br><pre><code>console.log(!![]);   // true\nconsole.log(!!{});   // true\nconsole.log(!!"0");  // true</code></pre>' },
+          { d: "medium", t: '<strong>Ответ:</strong> Функция — объект, можно добавлять свойства.<br><pre><code>function f() {}\nf.version = "1.0";\nconsole.log(f.version); // "1.0"</code></pre>' },
+          { d: "hard",   t: '<strong>Решение:</strong><br><pre><code>function isPlainObject(v) {\n  return v !== null &&\n         typeof v === "object" &&\n         Object.getPrototypeOf(v) === Object.prototype;\n}</code></pre>' },
+          { d: "hard",   t: '<strong>Ответ:</strong> Сравнение методов определения типа<br><pre><code>console.log(typeof []);                    // "object"\nconsole.log({}.toString.call([]));        // "[object Array]"\nconsole.log(Array.isArray([]));           // true</code></pre>' },
+          { d: "hard",   t: '<strong>Решение:</strong><br><pre><code>function typeStats(arr) {\n  return arr.reduce((acc, v) => {\n    const t = v === null ? "null" : typeof v;\n    acc[t] = (acc[t] || 0) + 1;\n    return acc;\n  }, {});\n}</code></pre>' }
+        ]
+      },
+        {
+            id: "primitive_methods",
+            title: "Методы примитивов",
+            icon: "✨",
+            color: "#5eead4",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Примитивы временно оборачиваются в объекты-обёртки (<code>String</code>, <code>Number</code>, <code>Boolean</code>) при вызове методов.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>"hello".toUpperCase()</code> → <code>"HELLO"</code>. Под капотом: <code>new String("hello").toUpperCase()</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>(123.456).toFixed(2)</code> → <code>"123.46"</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>true.toString()</code> → <code>"true"</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> У <code>null</code> и <code>undefined</code> нет методов и свойств.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "abc";\nconst upper = str.toUpperCase(); // "ABC"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>new String("abc")</code> — объект, <code>"abc"</code> — примитив. Пример: <code>typeof new String("abc")</code> → <code>"object"</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>new Number(5) === 5</code> → <code>false</code>, <code>new Number(5) == 5</code> → <code>true</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function callPrimitiveMethod(value, method) {\n  if (typeof value === "string") return value[method]();\n  if (typeof value === "number") return value[method]();\n  if (typeof value === "boolean") return value[method]();\n  return "Метод недоступен";\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> Строка — примитив, свойства нельзя добавить навсегда. Пример: <code>"abc".x = 10; console.log("abc".x); // undefined</code>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> Объекты-обёртки создают лишние объекты, что замедляет код и усложняет сравнения.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>// При вызове метода у примитива создаётся временный объект-обёртка,\n// после вызова метода объект уничтожается, а примитив остаётся.</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "numbers",
+            title: "Числа",
+            icon: "🔢",
+            color: "#f59e0b",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>number</code> — 64-битное число с плавающей точкой (IEEE 754).',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>0.1 + 0.2</code> → <code>0.30000000000000004</code> (особенность двоичной арифметики).',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>parseInt</code> — целое число, <code>parseFloat</code> — дробное.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>Number("123")</code> → <code>123</code>, <code>Number("123px")</code> → <code>NaN</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>Math.round(3.6) // 4\nMath.floor(3.6) // 3\nMath.ceil(3.6) // 4</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>Math.floor(Math.random() * 10) + 1</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>NaN</code> — Not a Number. Проверка: <code>Number.isNaN(NaN)</code> → <code>true</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function isFiniteNumber(value) {\n  return typeof value === "number" && !isNaN(value) && isFinite(value);\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>isNaN()</code> пытается преобразовать значение, <code>Number.isNaN()</code> — строгая проверка.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function roundToTwo(num) {\n  return Math.round(num * 100) / 100;\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>(10).toString(2) // "1010"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>Infinity</code> — бесконечность. Пример: <code>1 / 0</code> → <code>Infinity</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function sumDigits(n) {\n  return String(n).split("").reduce((a, b) => a + +b, 0);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> <code>9007199254740991</code> — максимальное целое число, точно представимое в <code>number</code>.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const big = 123n + 456n; // 579n\n// Нельзя: 123n + 456 // TypeError</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function safeCalc(expr) {\n  const [a, op, b] = expr.split(" ");\n  const numA = Number(a);\n  const numB = Number(b);\n  if (isNaN(numA) || isNaN(numB)) return "Ошибка";\n  switch (op) {\n    case "+": return numA + numB;\n    case "-": return numA - numB;\n    default: return "Ошибка";\n  }\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "strings",
+            title: "Строки",
+            icon: "🔤",
+            color: "#a78bfa",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const s1 = "abc";\nconst s2 = String("abc");\nconst s3 = new String("abc");</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const name = "Иван";\nconst str = `Привет, ${name}!`;</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>"abc".toUpperCase() // "ABC"\n"ABC".toLowerCase() // "abc"</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>"abc".length // 3</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "abc";\nstr[0] // "a"\nstr[str.length - 1] // "c"</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>slice()</code> — отрицательные индексы, <code>substring()</code> — не поддерживает, <code>substr()</code> — устарел.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "abc";\nstr.includes("b") // true\nstr.startsWith("a") // true\nstr.endsWith("c") // true</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function capitalize(str) {\n  return str[0].toUpperCase() + str.slice(1);\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "a b c";\nconst arr = str.split(" ");\nconst back = arr.join(" ");</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function countChar(str, char) {\n  return str.split("").filter(c => c === char).length;\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "  a  b  ";\nconst trimmed = str.trim();\nconst single = trimmed.replace(/  +/g, " ");</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "abcabc";\nstr.replace("a", "X") // "Xbcabc"\nstr.replaceAll("a", "X") // "XbcXbc"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function isPalindrome(str) {\n  return str === str.split("").reverse().join("");\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function camelToKebab(str) {\n  return str.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function escapeHtml(str) {\n  return str.replace(/[<>"&]/g, m => ({\n    "<": "&lt;",\n    ">": "&gt;",\n    \'"\': "&quot;",\n    "&": "&amp;"\n  })[m]);\n}</code></pre>',
+            },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function parseQuery(str) {\n  return Object.fromEntries(str.split("&").map(p => p.split("=")));\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "arrays",
+            title: "Массивы",
+            icon: "📚",
+            color: "#60a5fa",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const nums = [1, 2, 3];\nconst strs = ["a", "b"];\nconst mixed = [1, "a", true];</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2, 3];\narr[0] // 1\narr[arr.length - 1] // 3\narr[arr.length - 2] // 2</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Возвращает <code>undefined</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [];\narr.push(1); // [1]\narr.unshift(0); // [0, 1]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2];\narr.pop(); // [1]\narr.shift(); // []</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Длина массива. Пример: <code>const arr = []; arr.length = 5; // [empty × 5]</code>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Пустой массив длиной 5: <code>new Array(5)</code> — без элементов, <code>[undefined, undefined, ...]</code> — с элементами.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2, 3];\n// for\nfor (let i = 0; i < arr.length; i++) console.log(arr[i]);\n// for...of\nfor (const el of arr) console.log(el);\n// forEach\narr.forEach(el => console.log(el));</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function reverse(arr) {\n  return arr.slice().reverse();\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr1 = [1, 2];\nconst arr2 = [3, 4];\narr1.concat(arr2) // [1, 2, 3, 4]\n[...arr1, ...arr2] // [1, 2, 3, 4]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2];\nconst copy1 = arr.slice();\nconst copy2 = [...arr];\ncopy1 !== arr // true</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2, 3];\narr.indexOf(2) // 1\narr.includes(2) // true</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>slice()</code> — копирует часть массива, <code>splice()</code> — удаляет/добавляет элементы.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function unique(arr) {\n  return arr.filter((v, i) => arr.indexOf(v) === i);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function chunk(arr, size) {\n  const result = [];\n  for (let i = 0; i < arr.length; i += size) {\n    result.push(arr.slice(i, i + size));\n  }\n  return result;\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function flattenOneLevel(arr) {\n  return arr.reduce((a, b) => a.concat(b), []);\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "array_methods",
+            title: "Методы массивов",
+            icon: "🛠️",
+            color: "#22c55e",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3].forEach(el => console.log(el));</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3].map(x => x * x) // [1, 4, 9]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3, 4].filter(x => x % 2 === 0) // [2, 4]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3].reduce((a, b) => a + b, 0) // 6</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>find()</code> — первый подходящий элемент, <code>filter()</code> — все подходящие.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3].some(x => x > 2) // true\n[1, 2, 3].every(x => x > 2) // false</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>["b", "a", "c"].sort() // ["a", "b", "c"]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> Без колбэка сортирует как строки. Пример: <code>[10, 2].sort()</code> → <code>[10, 2]</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [3, 1, 2];\narr.sort((a, b) => a - b) // [1, 2, 3]\narr.sort((a, b) => b - a) // [3, 2, 1]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function countElements(arr) {\n  return arr.reduce((a, b) => { a[b] = (a[b] || 0) + 1; return a; }, {});\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>["a", "b"].map((v, i) => ({ id: i, value: v })) // [{id: 0, value: "a"}, ...]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>[[1, 2], [3]].flat() // [1, 2, 3]\n[1, 2].flatMap(x => [x, x * 2]) // [1, 2, 2, 4]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>[1, 2, 3].filter(x => x > 1).map(x => x * 2).sort((a, b) => a - b);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>new Array(3).fill(0) // [0, 0, 0]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>Array.from("abc") // ["a", "b", "c"]\nArray.from({ length: 3 }, (_, i) => i) // [0, 1, 2]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [["a", 1], ["b", 2]];\nconst obj = Object.fromEntries(arr); // {a: 1, b: 2}\nconst back = Object.entries(obj); // [["a", 1], ["b", 2]]</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>Array.prototype.myMap = function(fn) {\n  return this.reduce((a, b, i) => [...a, fn(b, i)], []);\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>Array.prototype.myFilter = function(fn) {\n  return this.reduce((a, b, i) => fn(b, i) ? [...a, b] : a, []);\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>Array.prototype.myReduce = function(fn, init) {\n  let acc = init !== undefined ? init : this[0];\n  for (let i = init !== undefined ? 0 : 1; i < this.length; i++) {\n    acc = fn(acc, this[i], i);\n  }\n  return acc;\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function groupBy(arr, keyFn) {\n  return arr.reduce((a, b) => {\n    const key = keyFn(b);\n    (a[key] = a[key] || []).push(b);\n    return a;\n  }, {});\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "iterables",
+            title: "Перебираемые объекты",
+            icon: "🔁",
+            color: "#14b8a6",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Итерируемый объект — объект, у которого есть метод <code>Symbol.iterator</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Примеры: <code>String</code>, <code>Array</code>, <code>Map</code>, <code>Set</code>, <code>arguments</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>for (const c of "abc") console.log(c);\nfor (const el of [1, 2]) console.log(el);\nfor (const el of new Set([1, 2])) console.log(el);</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>Symbol.iterator</code> — метод, возвращающий итератор (объект с <code>next()</code>).',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const range = {\n  from: 1,\n  to: 3,\n  [Symbol.iterator]() {\n    let current = this.from;\n    return {\n      next() {\n        return current <= this.to ? { done: false, value: current++ } : { done: true };\n      }.bind(this)\n    };\n  }\n};</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const iterable = { [Symbol.iterator]() { return [1, 2][Symbol.iterator](); } };\n[...iterable] // [1, 2]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "abc";\nconst arr = [...str]; // ["a", "b", "c"]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> Итерируемый — с <code>Symbol.iterator</code>, array-like — с <code>length</code> и индексами.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = {\n  [Symbol.iterator]() {\n    let i = 0;\n    return {\n      next() {\n        return i < 3 ? { done: false, value: i++ } : { done: true };\n      }\n    };\n  }\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const infinite = {\n  [Symbol.iterator]() {\n    let i = 0;\n    return {\n      next() {\n        return { done: false, value: i++ };\n      }\n    };\n  }\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: "x", c: 2 };\nobj[Symbol.iterator] = function*() {\n  for (const key in this) {\n    if (typeof this[key] === "number") yield this[key];\n  }\n};</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = {\n  [Symbol.iterator]() {\n    const keys = Object.keys(this);\n    let i = 0;\n    return {\n      next() {\n        while (i < keys.length) {\n          const key = keys[i++];\n          if (this[key] > 1) return { done: false, value: this[key] };\n        }\n        return { done: true };\n      }.bind(this)\n    };\n  }\n};</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "map_set",
+            title: "Map и Set",
+            icon: "🗺️",
+            color: "#8b5cf6",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map();\nmap.set("a", 1);\nmap.set("b", 2);\nmap.set("c", 3);</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>Map</code> — ключи любого типа, порядок сохраняется, размер через <code>size</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map();\nmap.set("a", 1);\nmap.get("a") // 1\nmap.has("a") // true\nmap.delete("a");</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const set = new Set([1, 2, 2, 3]); // {1, 2, 3}</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>Set</code> хранит только уникальные значения.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map();\nmap.size // 0\nconst set = new Set();\nset.size // 0</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map([["a", 1], ["b", 2]]);\nfor (const [key, value] of map) console.log(key, value);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nconst map = new Map(Object.entries(obj));</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map([["a", 1], ["b", 2]]);\nconst obj = Object.fromEntries(map);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const arr = [1, 2, 2, 3];\nconst unique = [...new Set(arr)]; // [1, 2, 3]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function intersect(a, b) {\n  return [...new Set(a)].filter(x => new Set(b).has(x));\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function diff(a, b) {\n  return [...new Set(a)].filter(x => !new Set(b).has(x));\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function wordFreq(str) {\n  const map = new Map();\n  str.split(" ").forEach(word => map.set(word, (map.get(word) || 0) + 1));\n  return map;\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function groupBy(arr, keyFn) {\n  const map = new Map();\n  arr.forEach(el => {\n    const key = keyFn(el);\n    if (!map.has(key)) map.set(key, []);\n    map.get(key).push(el);\n  });\n  return map;\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const cache = new Map();\nfunction memoize(fn) {\n  return function(arg) {\n    if (cache.has(arg)) return cache.get(arg);\n    const result = fn(arg);\n    cache.set(arg, result);\n    return result;\n  };\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> <code>Map</code> — для сложных ключей, <code>Object</code> — для простых строковых ключей.',
+                },
+            ],
+        },
+        {
+            id: "weakmap_weakset",
+            title: "WeakMap и WeakSet",
+            icon: "🫥",
+            color: "#f472b6",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>WeakMap</code> — слабая ссылка на ключи-объекты, не мешает сборщику мусора.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Ключи — только объекты, чтобы сборщик мусора мог удалить запись, если объект недоступен.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>WeakSet</code> — слабая ссылка на объекты, не мешает сборщику мусора.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Хранит только объекты, чтобы сборщик мусора мог удалить элемент, если объект недоступен.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> Нет перебора, чтобы не мешать сборщику мусора.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const privateData = new WeakMap();\nclass User {\n  constructor(name) {\n    privateData.set(this, { name });\n  }\n  getName() {\n    return privateData.get(this).name;\n  }\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const processed = new WeakSet();\nfunction process(obj) {\n  if (processed.has(obj)) return;\n  processed.add(obj);\n  // ...\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>WeakMap</code> не мешает сборщику мусора удалять объекты, если на них нет других ссылок.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const metaCache = new WeakMap();\nfunction getMeta(el) {\n  if (!metaCache.has(el)) metaCache.set(el, {});\n  return metaCache.get(el);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> <code>Map</code> — для долговременного хранения, <code>WeakMap</code> — для метаданных объектов.',
+                },
+            ],
+        },
+        {
+            id: "object_entries",
+            title: "Object.keys, values, entries",
+            icon: "🗂️",
+            color: "#38bdf8",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nObject.keys(obj) // ["a", "b"]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nObject.values(obj) // [1, 2]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nObject.entries(obj) // [["a", 1], ["b", 2]]</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nfor (const [key, value] of Object.entries(obj)) {\n  console.log(key, value);\n}</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>for...in</code> — перебирает все перечисляемые свойства, включая прототип, <code>Object.keys()</code> — только собственные.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const prices = { apple: 100, banana: 200 };\nObject.entries(prices).map(([k, v]) => `${k}: ${v}`);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function sumValues(obj) {\n  return Object.values(obj).reduce((a, b) => a + b, 0);\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function filterObject(obj, fn) {\n  return Object.fromEntries(\n    Object.entries(obj).filter(([k, v]) => fn(v))\n  );\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function sortObject(obj) {\n  return Object.fromEntries(\n    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b))\n  );\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function invert(obj) {\n  return Object.fromEntries(\n    Object.entries(obj).map(([k, v]) => [v, k])\n  );\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function mapObject(obj, fn) {\n  return Object.fromEntries(\n    Object.entries(obj).map(([k, v]) => [k, fn(v)])\n  );\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function deepFilter(obj, fn) {\n  return Object.fromEntries(\n    Object.entries(obj).filter(([k, v]) => {\n      if (typeof v === "object") return deepFilter(v, fn);\n      return fn(v);\n    })\n  );\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "destructuring",
+            title: "Деструктурирующее присваивание",
+            icon: "🧠",
+            color: "#f59e0b",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const [a, b, c] = [1, 2, 3];</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const { name, age } = { name: "Ann", age: 20 };</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const { name: userName } = { name: "Ann" };</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const [a = 1, b = 2] = []; // a=1, b=2\nconst { x = 10 } = {}; // x=10</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const [a, , c] = [1, 2, 3]; // a=1, c=3</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>let a = 1, b = 2;\n[a, b] = [b, a];</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const [a, ...rest] = [1, 2, 3]; // a=1, rest=[2, 3]</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const { a, ...rest } = { a: 1, b: 2, c: 3 }; // a=1, rest={b:2, c:3}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const user = {\n  name: "Ann",\n  address: { city: "Moscow" }\n};\nconst { name, address: { city } } = user;</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function f({ name, age }) {\n  console.log(name, age);\n}\nf({ name: "Ann", age: 20 });</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function f([x, y]) {\n  console.log(x, y);\n}\nf([1, 2]);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nfor (const [key, value] of Object.entries(obj)) {\n  console.log(key, value);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const {\n  a: [x, y = 10],\n  b: { c: z = 20 } = {},\n  d = 30\n} = { a: [1], b: {} };</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function normalizeUser({\n  name = "Anonymous",\n  age = 0,\n  address: { city = "Unknown" } = {}\n} = {}) {\n  return { name, age, city };\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const iterable = {\n  [Symbol.iterator]() {\n    return [1, 2][Symbol.iterator]();\n  }\n};\nconst [a, b] = iterable;</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const user = {\n  name: "Ann",\n  address: { city: "Moscow" }\n};\nconst { name, address: { city } } = user;</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "date_time",
+            title: "Дата и время",
+            icon: "⏰",
+            color: "#22c55e",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const now = new Date();</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const date1 = new Date("2026-03-18");\nconst date2 = new Date(2026, 2, 18);</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const date = new Date();\ndate.getFullYear(); // год\ndate.getMonth(); // месяц (0-11)\ndate.getDate(); // день\ndate.getHours(); // часы\ndate.getMinutes(); // минуты\ndate.getSeconds(); // секунды</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>getDay()</code> — день недели (0-6), <code>getDate()</code> — день месяца (1-31).',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const date = new Date();\ndate.setFullYear(2027);\ndate.setMonth(5);\ndate.setDate(1);</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>timestamp</code> — количество миллисекунд с 1970-01-01. Пример: <code>Date.now()</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const date = new Date();\ndate.toString(); // "Wed Mar 18 2026 12:00:00 GMT+0300"\ndate.toDateString(); // "Wed Mar 18 2026"\ndate.toTimeString(); // "12:00:00 GMT+0300"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function diffDays(a, b) {\n  return Math.abs((a - b) / (1000 * 60 * 60 * 24));\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function formatDate(date) {\n  return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}.${date.getFullYear()}`;\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function minutesSince(date) {\n  return (Date.now() - date) / (1000 * 60);\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const inWeek = new Date();\ninWeek.setDate(inWeek.getDate() + 7);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> UTC-методы возвращают время по Гринвичу, локальные — по текущему часовому поясу.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>toISOString()</code> возвращает строку в формате ISO 8601: <code>"2026-03-18T12:00:00.000Z"</code>.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function isWeekend(date) {\n  return date.getDay() === 0 || date.getDay() === 6;\n}</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>function weekOfMonth(date) {\n  return Math.ceil(date.getDate() / 7);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function countdown(target) {\n  const diff = target - new Date();\n  return {\n    days: Math.floor(diff / (1000 * 60 * 60 * 24)),\n    hours: Math.floor(diff / (1000 * 60 * 60)) % 24,\n    minutes: Math.floor(diff / (1000 * 60)) % 60,\n    seconds: Math.floor(diff / 1000) % 60\n  };\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function addMonths(date, months) {\n  date.setMonth(date.getMonth() + months);\n  return date;\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> <code>Intl.DateTimeFormat</code> — гибкое форматирование, ISO — стандартный формат, ручное — для кастомных форматов.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function parseDate(str) {\n  const [date, time] = str.split(" ");\n  const [day, month, year] = date.split(".");\n  const [hours, minutes] = time.split(":");\n  return new Date(year, month - 1, day, hours, minutes);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>class Scheduler {\n  constructor() {\n    this.events = [];\n  }\n  add(date) {\n    this.events.push(date);\n  }\n  next() {\n    return this.events.sort((a, b) => a - b)[0];\n  }\n}</code></pre>',
+                },
+            ],
+        },
+        {
+            id: "json",
+            title: "Формат JSON, метод toJSON",
+            icon: "🧾",
+            color: "#ef4444",
+            tasks: [
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> JSON — текстовый формат обмена данными, только строки, числа, объекты, массивы, <code>true</code>, <code>false</code>, <code>null</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nJSON.stringify(obj) // "{"a":1,"b":2}"</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "{"a":1,"b":2}";\nJSON.parse(str) // {a:1, b:2}</code></pre>',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Сериализуются: строки, числа, объекты, массивы, <code>true</code>, <code>false</code>, <code>null</code>. Не сериализуются: функции, <code>undefined</code>, <code>Symbol</code>.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> Функции, <code>undefined</code>, <code>Symbol</code> — удаляются, <code>Date</code> — становится строкой.',
+                },
+                {
+                    d: "easy",
+                    t: '<strong>Ответ:</strong> <code>Date</code> становится строкой в формате ISO.',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2, c: 3 };\nJSON.stringify(obj, ["a", "b"]) // "{"a":1,"b":2}"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nJSON.stringify(obj, (k, v) => typeof v === "number" ? v * 2 : v);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = { a: 1, b: 2 };\nJSON.stringify(obj, null, 2);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "{"a":1,"b":2}";\nJSON.parse(str, (k, v) => typeof v === "string" ? v.toUpperCase() : v);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const str = "{"date":"2026-03-18T12:00:00.000Z"}";\nJSON.parse(str, (k, v) => k === "date" ? new Date(v) : v);</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Ответ:</strong> <code>toJSON()</code> — метод, возвращающий значение для сериализации. Пример: <code>{ toJSON() { return "custom"; } }</code>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = {\n  a: 1,\n  toJSON() { return { b: 2 }; }\n};\nJSON.stringify(obj) // "{"b":2}"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const map = new Map([["a", 1], ["b", 2]]);\nJSON.stringify([...map]); // "[["a",1],["b",2]]"</code></pre>',
+                },
+                {
+                    d: "medium",
+                    t: '<strong>Решение:</strong><br><pre><code>const set = new Set([1, 2, 3]);\nJSON.stringify([...set]); // "[1,2,3]"</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Ответ:</strong> Циклические ссылки приводят к бесконечной рекурсии при сериализации.',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function safeStringify(obj) {\n  const cache = new Set();\n  return JSON.stringify(obj, (k, v) => {\n    if (typeof v === "object" && v !== null) {\n      if (cache.has(v)) return "[Circular]";\n      cache.add(v);\n    }\n    return v;\n  });\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>function saveState(obj) {\n  return JSON.stringify(obj);\n}\nfunction loadState(json) {\n  return JSON.parse(json);\n}</code></pre>',
+                },
+                {
+                    d: "hard",
+                    t: '<strong>Решение:</strong><br><pre><code>const obj = {\n  a: 1,\n  b: {\n    c: 2,\n    toJSON() { return { d: 3 }; }\n  }\n};\nJSON.stringify(obj); // "{"a":1,"b":{"d":3}}"</code></pre>',
+                },
+            ],
+        },
+    ];
+
+    const STORAGE_KEY = "jsSolutions_done";
+    let done = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    let currentFilter = "all";
+    let searchQuery = "";
+    const TOTAL = TOPICS.reduce((sum, t) => sum + t.tasks.length, 0);
+
+    function renderAll() {
+      const root = document.getElementById("tasksRoot");
+      root.innerHTML = "";
+
+      let easy = 0, medium = 0, hard = 0;
+      TOPICS.forEach(topic =>
+        topic.tasks.forEach(task => {
+          if (task.d === "easy") easy++;
+          if (task.d === "medium") medium++;
+          if (task.d === "hard") hard++;
+        })
+      );
+
+      document.getElementById("easyCount").textContent = easy;
+      document.getElementById("medCount").textContent = medium;
+      document.getElementById("hardCount").textContent = hard;
+
+      let taskNumber = 0;
+
+      TOPICS.forEach(topic => {
+        const section = document.createElement("section");
+        section.className = "topic-section";
+
+        const header = document.createElement("div");
+        header.className = "topic-header";
+        header.innerHTML = `
+          <div class="topic-icon" style="background:${topic.color}22; color:${topic.color}">
+            ${topic.icon}
+          </div>
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-count">${topic.tasks.length} решений</div>
+        `;
+
+        section.appendChild(header);
+
+        const grid = document.createElement("div");
+        grid.className = "task-grid";
+
+        topic.tasks.forEach((task, idx) => {
+          taskNumber++;
+          const id = `${topic.id}_${idx}`;
+          const isDone = !!done[id];
+
+          const labels = { easy: "Лёгкое", medium: "Среднее", hard: "Сложное" };
+          const diffClasses = { easy: "diff-easy", medium: "diff-medium", hard: "diff-hard" };
+
+          const card = document.createElement("div");
+          card.className = `task-card${isDone ? " done" : ""}`;
+          card.style.setProperty("--card-color", topic.color);
+
+          card.dataset.id   = id;
+          card.dataset.diff = task.d;
+          card.dataset.done = isDone ? "1" : "0";
+          card.dataset.text = task.t.replace(/<[^>]+>/g, "").toLowerCase();
+
+          card.innerHTML = `
+            <div class="task-top">
+              <span class="task-num">#${String(taskNumber).padStart(3, "0")}</span>
+              <span class="difficulty ${diffClasses[task.d]}">${labels[task.d]}</span>
+            </div>
+            <div class="task-text">${task.t}</div>
+            <div class="task-actions">
+              <button class="btn-done" onclick="toggleDone('${id}', this)">
+                ${isDone ? "✅ Сделано" : "○ Выполнено"}
+              </button>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        root.appendChild(section);
+      });
+
+      updateProgress();
+      applyFilter();
+    }
+
+    function toggleDone(id, btn) {
+      done[id] = !done[id];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+
+      const card = btn.closest(".task-card");
+      const isDone = !!done[id];
+
+      card.classList.toggle("done", isDone);
+      card.dataset.done = isDone ? "1" : "0";
+      btn.textContent = isDone ? "✅ Сделано" : "○ Выполнено";
+
+      updateProgress();
+      applyFilter();
+    }
+
+    function updateProgress() {
+      const completed = Object.values(done).filter(Boolean).length;
+      const percent = ((completed / TOTAL) * 100).toFixed(1);
+
+      document.getElementById("progressBar").style.width = percent + "%";
+      document.getElementById("progressText").textContent = `${completed} / ${TOTAL}`;
+      document.getElementById("floatCounter").textContent = `✅ ${completed} / ${TOTAL}`;
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll(".filter-btn").forEach(el => el.classList.remove("active"));
+      btn.classList.add("active");
+      applyFilter();
+    }
+
+    function filterTasks() {
+      searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
+      applyFilter();
+    }
+
+    function applyFilter() {
+      document.querySelectorAll(".task-card").forEach(card => {
+        const diff = card.dataset.diff;
+        const isDone = card.dataset.done === "1";
+        const text = card.dataset.text;
+        let visible = true;
+
+        if (currentFilter === "easy")   visible = diff === "easy";
+        if (currentFilter === "medium") visible = diff === "medium";
+        if (currentFilter === "hard")   visible = diff === "hard";
+        if (currentFilter === "done")   visible = isDone;
+        if (currentFilter === "undone") visible = !isDone;
+        if (searchQuery && !text.includes(searchQuery)) visible = false;
+
+        card.classList.toggle("hidden", !visible);
+      });
+
+      document.querySelectorAll(".topic-section").forEach(section => {
+        const hasVisible = [...section.querySelectorAll(".task-card")]
+          .some(card => !card.classList.contains("hidden"));
+        section.classList.toggle("hidden", !hasVisible);
+      });
+    }
+
+    function resetAll() {
+      if (confirm("Сбросить весь прогресс?")) {
+        done = {};
+        localStorage.removeItem(STORAGE_KEY);
+        renderAll();
+      }
+    }
+
+    renderAll();
+    </script>
+</body>
+</html>
